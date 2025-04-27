@@ -13,4 +13,10 @@ public class Constants {
         public static final String JOIN_COLUMN = "user_id";
         public static final String INVERSE_JOIN_COLUMN = "role_id";
     }
+
+    public static class EXCEPTION_MESSAGES {
+
+        public static final String NOT_FOUND = "{0} not found";
+        public static final String DUPLICATED = "{0} already existed";
+    }
 }
