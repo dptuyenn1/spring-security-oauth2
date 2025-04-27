@@ -5,4 +5,6 @@ import com.dev.demo.models.Role;
 public interface RoleService {
 
     Role create(Role role);
+
+    Role findByName(String name);
 }
