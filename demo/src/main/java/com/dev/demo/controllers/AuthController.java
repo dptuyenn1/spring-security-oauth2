@@ -2,11 +2,14 @@ package com.dev.demo.controllers;
 
 import com.dev.demo.dto.request.LoginRequest;
 import com.dev.demo.dto.response.AuthResponse;
+import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.services.AuthService;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,5 +26,11 @@ public class AuthController {
         authResponse.setAccessToken(authService.login(request));
 
         return authResponse;
+    }
+
+    @GetMapping("/me")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse me(Principal principal) {
+        return authService.me(principal.getName());
     }
 }

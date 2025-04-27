@@ -1,8 +1,12 @@
 package com.dev.demo.services.impl;
 
 import com.dev.demo.dto.request.LoginRequest;
+import com.dev.demo.dto.response.UserResponse;
+import com.dev.demo.mappers.Mapper;
+import com.dev.demo.models.User;
 import com.dev.demo.services.AuthService;
 import com.dev.demo.services.JwtService;
+import com.dev.demo.services.UserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +20,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final Mapper<User, UserResponse> mapper;
 
     @Override
     public String login(LoginRequest request) throws JOSEException {
@@ -23,5 +29,10 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         return jwtService.generateToken(request.getUsername());
+    }
+
+    @Override
+    public UserResponse me(String username) {
+        return mapper.mapFromModelToDTO(userService.findByUsername(username));
     }
 }
