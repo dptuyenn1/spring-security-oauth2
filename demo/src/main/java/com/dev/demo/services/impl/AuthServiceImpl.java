@@ -1,6 +1,7 @@
 package com.dev.demo.services.impl;
 
 import com.dev.demo.dto.request.LoginRequest;
+import com.dev.demo.dto.request.RegisterRequest;
 import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.mappers.Mapper;
 import com.dev.demo.models.User;
@@ -34,5 +35,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponse me(String username) {
         return mapper.mapFromModelToDTO(userService.findByUsername(username));
+    }
+
+    @Override
+    public UserResponse register(RegisterRequest request) {
+        return mapper.mapFromModelToDTO(userService.create(request));
     }
 }

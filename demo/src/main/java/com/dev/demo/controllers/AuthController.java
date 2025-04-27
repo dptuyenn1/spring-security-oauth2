@@ -1,6 +1,7 @@
 package com.dev.demo.controllers;
 
 import com.dev.demo.dto.request.LoginRequest;
+import com.dev.demo.dto.request.RegisterRequest;
 import com.dev.demo.dto.response.AuthResponse;
 import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.services.AuthService;
@@ -32,5 +33,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public UserResponse me(Principal principal) {
         return authService.me(principal.getName());
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse register(@RequestBody RegisterRequest request) {
+        return authService.register(request);
     }
 }
