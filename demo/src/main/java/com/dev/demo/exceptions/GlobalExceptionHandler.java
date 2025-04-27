@@ -30,4 +30,14 @@ public class GlobalExceptionHandler {
 
         return map;
     }
+
+    @ExceptionHandler(value = DuplicateException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleException(final DuplicateException ex) {
+        final Map<String, String> map = new HashMap<>();
+
+        map.put("message", ex.getMessage());
+
+        return map;
+    }
 }
