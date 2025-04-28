@@ -1,43 +1,38 @@
 package com.dev.demo.exceptions;
 
+import com.dev.demo.dto.response.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleException(final Exception ex) {
-        final Map<String, String> map = new HashMap<>();
-
-        map.put("message", ex.getMessage());
-
-        return map;
+    public ErrorResponse handleException(final Exception ex, HttpServletRequest request) {
+        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(value = NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleException(final NotFoundException ex) {
-        final Map<String, String> map = new HashMap<>();
-
-        map.put("message", ex.getMessage());
-
-        return map;
+    public ErrorResponse handleException(final NotFoundException ex, HttpServletRequest request) {
+        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(value = DuplicateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleException(final DuplicateException ex) {
-        final Map<String, String> map = new HashMap<>();
+    public ErrorResponse handleException(final DuplicateException ex, HttpServletRequest request) {
+        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
+    }
 
-        map.put("message", ex.getMessage());
-
-        return map;
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleException(HttpServletRequest request) {
+        return new ErrorResponse("Authentication failed! Invalid username or password",
+                request.getRequestURI());
     }
 }
