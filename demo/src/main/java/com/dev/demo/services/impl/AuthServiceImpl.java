@@ -25,11 +25,11 @@ public class AuthServiceImpl implements AuthService {
     private final Mapper<User, UserResponse> mapper;
 
     @Override
-    public String login(LoginRequest request) throws JOSEException {
+    public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        return jwtService.generateToken(request.getUsername());
+        return jwtService.generateToken(authentication);
     }
 
     @Override
