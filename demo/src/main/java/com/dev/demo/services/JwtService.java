@@ -1,12 +1,13 @@
 package com.dev.demo.services;
 
 import com.nimbusds.jose.JOSEException;
+import org.springframework.security.core.Authentication;
 
 import javax.crypto.SecretKey;
 
 public interface JwtService {
 
-    String generateToken(String username) throws JOSEException;
+    String generateToken(Authentication authentication);
 
     SecretKey getSecretKey();
 }

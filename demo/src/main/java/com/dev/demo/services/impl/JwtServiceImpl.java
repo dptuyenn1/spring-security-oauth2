@@ -8,11 +8,14 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -30,11 +33,16 @@ public class JwtServiceImpl implements JwtService {
     private static final String ISSUER = "ADMIN";
 
     @Override
-    public String generateToken(String username) throws JOSEException {
+    public String generateToken(Authentication authentication) {
+        String username = authentication.getName();
+        List<String> roles = authentication
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
         Date issuedAt = new Date();
         Date expiredAt = new Date(issuedAt.getTime() + EXPIRATION_TIME);
-
-        JWSSigner signer = new MACSigner(KEY);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet
                 .Builder()
@@ -42,11 +50,17 @@ public class JwtServiceImpl implements JwtService {
                 .issuer(ISSUER)
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)
+                .claim("roles", roles)
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
 
-        signedJWT.sign(signer);
+        try {
+            JWSSigner signer = new MACSigner(KEY);
+            signedJWT.sign(signer);
+        } catch (JOSEException exception) {
+            throw new RuntimeException(exception.getMessage());
+        }
 
         return signedJWT.serialize();
     }
