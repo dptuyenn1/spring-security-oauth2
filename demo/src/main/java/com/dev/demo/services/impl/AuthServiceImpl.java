@@ -8,7 +8,6 @@ import com.dev.demo.models.User;
 import com.dev.demo.services.AuthService;
 import com.dev.demo.services.JwtService;
 import com.dev.demo.services.UserService;
-import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
