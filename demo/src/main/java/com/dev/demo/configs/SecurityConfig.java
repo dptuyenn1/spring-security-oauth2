@@ -13,7 +13,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +29,8 @@ public class SecurityConfig {
     private static final String[] ROLES = {"USER", "ADMIN", "SUPER_ADMIN"};
 
     private final JwtService jwtService;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,6 +47,9 @@ public class SecurityConfig {
                         .authenticated()
                         .anyRequest()
                         .hasAnyRole(ROLES))
+                .exceptionHandling(config -> config
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
                 .oauth2ResourceServer(config -> config.jwt(Customizer.withDefaults()));
 
         return http.build();
@@ -56,13 +63,18 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        /*
+        setAuthoritiesClaimName => let the converter know which claims contains the roles
+        because use hasAnyRole => the role already has prefix: ROLE_<ROLE_NAME>
+        call setAuthorityPrefix to avoid automatically defined prefix: SCOPE_ROLE_<ROLE_NAME>
+         */
         grantedAuthoritiesConverter.setAuthoritiesClaimName(CLAIMS_NAME);
-        // because use hasAnyRole => the role already have prefix: ROLE_<ROLE_NAME>
-        // call this method to avoid automatically defined prefix: SCOPE_ROLE_<ROLE_NAME>
         grantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
         return jwtAuthenticationConverter;
     }
 }
