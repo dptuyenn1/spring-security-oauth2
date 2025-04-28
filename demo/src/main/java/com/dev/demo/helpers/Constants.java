@@ -19,4 +19,9 @@ public class Constants {
         public static final String NOT_FOUND = "{0} not found";
         public static final String DUPLICATED = "{0} already existed";
     }
+
+    public static class API_RESPONSE_MESSAGES {
+
+        public static final String SUCCESS = "{0} successfully";
+    }
 }
