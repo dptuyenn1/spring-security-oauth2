@@ -2,8 +2,8 @@ package com.dev.demo.controllers;
 
 import com.dev.demo.dto.request.LoginRequest;
 import com.dev.demo.dto.request.RegisterRequest;
-import com.dev.demo.dto.response.AuthResponse;
 import com.dev.demo.dto.response.SuccessResponse;
+import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.helpers.Constants;
 import com.dev.demo.services.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public SuccessResponse login(@RequestBody LoginRequest request) {
-        AuthResponse authResponse = new AuthResponse();
-
-        authResponse.setAccessToken(authService.login(request));
-
         return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
-                "Login"), authResponse, HttpStatus.OK);
+                "Login"), authService.login(request), HttpStatus.OK);
     }
 
     @GetMapping("/me")
@@ -38,8 +34,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public SuccessResponse register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        
+        UserResponse response = authService.register(request);
+
         return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Register"), null, HttpStatus.CREATED);
     }

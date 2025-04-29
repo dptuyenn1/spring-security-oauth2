@@ -2,6 +2,7 @@ package com.dev.demo.services.impl;
 
 import com.dev.demo.dto.request.LoginRequest;
 import com.dev.demo.dto.request.RegisterRequest;
+import com.dev.demo.dto.response.AuthResponse;
 import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.mappers.Mapper;
 import com.dev.demo.models.User;
@@ -24,11 +25,15 @@ public class AuthServiceImpl implements AuthService {
     private final Mapper<User, UserResponse> mapper;
 
     @Override
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        
+        AuthResponse response = new AuthResponse();
 
-        return jwtService.generateToken(authentication);
+        response.setAccessToken(jwtService.generateToken(authentication));
+
+        return response;
     }
 
     @Override
