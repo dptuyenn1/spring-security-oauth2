@@ -1,5 +1,6 @@
 package com.dev.demo.configs;
 
+import com.dev.demo.helpers.Constants;
 import com.dev.demo.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.text.MessageFormat;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +32,9 @@ public class AppConfig {
     public UserDetailsService userDetailsService() {
         return username -> userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        MessageFormat.format(Constants.EXCEPTION_MESSAGES.NOT_FOUND,
+                                "User with username: " + username)));
     }
 
     @Bean
@@ -41,7 +46,7 @@ public class AppConfig {
 
         return new ProviderManager(provider);
     }
-    
+
     @Bean
     @RequestScope
     public ModelMapper modelMapper() {
