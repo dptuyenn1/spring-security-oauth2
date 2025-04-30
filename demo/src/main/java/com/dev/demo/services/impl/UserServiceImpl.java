@@ -3,14 +3,13 @@ package com.dev.demo.services.impl;
 import com.dev.demo.dto.request.RegisterRequest;
 import com.dev.demo.exceptions.DuplicateException;
 import com.dev.demo.helpers.Constants;
+import com.dev.demo.mappers.UserMapper;
 import com.dev.demo.models.Role;
 import com.dev.demo.models.User;
 import com.dev.demo.repositories.UserRepository;
 import com.dev.demo.services.RoleService;
 import com.dev.demo.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
-    private final ModelMapper modelMapper;
+    private final UserMapper mapper;
 
     @Override
     public User create(User user) {
@@ -58,11 +57,7 @@ public class UserServiceImpl implements UserService {
         else
             roles = requestRoles.stream().map(roleService::findByName).collect(Collectors.toSet());
 
-        TypeMap<RegisterRequest, User> typeMap = modelMapper.createTypeMap(RegisterRequest.class, User.class);
-
-        User user = typeMap
-                .addMappings(m -> m.skip(User::setRoles))
-                .map(request);
+        User user = mapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
