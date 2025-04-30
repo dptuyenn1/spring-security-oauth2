@@ -47,10 +47,10 @@ public class SecurityConfig {
                         .authenticated()
                         .anyRequest()
                         .hasAnyRole(ROLES))
-                .exceptionHandling(config -> config
+                .oauth2ResourceServer(config -> config
+                        .jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler))
-                .oauth2ResourceServer(config -> config.jwt(Customizer.withDefaults()));
+                        .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }
