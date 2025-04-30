@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -29,7 +30,7 @@ public class JwtServiceImpl implements JwtService {
             * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
 
     private static final String KEY = "vlywKvNRfV2EtFyJAY7ZOtNZdK2Na8wAAydvd9iZZkqswoqoadtLsrfnUjvU86ve";
-    private static final String ALGORITHM = "AES";
+    private static final MacAlgorithm ALGORITHM = MacAlgorithm.HS512;
     private static final String ISSUER = "ADMIN";
 
     @Override
@@ -67,6 +68,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public SecretKey getSecretKey() {
-        return new SecretKeySpec(KEY.getBytes(), ALGORITHM);
+        return new SecretKeySpec(KEY.getBytes(), ALGORITHM.getName());
     }
 }
