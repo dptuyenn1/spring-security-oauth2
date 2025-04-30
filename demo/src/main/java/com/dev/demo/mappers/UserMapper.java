@@ -20,14 +20,14 @@ public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     User toUser(RegisterRequest request);
 
-    default Set<String> fromStringToRole(Set<Role> roles) {
+    default Set<String> toSetString(Set<Role> roles) {
         return roles
                 .stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
     }
 
-    default Set<Role> fromRoleToString(Set<String> roles) {
+    default Set<Role> toSetRole(Set<String> roles) {
         return roles
                 .stream()
                 .map(role -> Role.builder().name(role).build())
