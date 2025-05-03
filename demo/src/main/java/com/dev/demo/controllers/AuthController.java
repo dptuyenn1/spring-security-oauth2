@@ -6,6 +6,7 @@ import com.dev.demo.dto.response.SuccessResponse;
 import com.dev.demo.dto.response.UserResponse;
 import com.dev.demo.helpers.Constants;
 import com.dev.demo.services.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
+    @SecurityRequirements
     public SuccessResponse login(@RequestBody LoginRequest request) {
         return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Login"), authService.login(request), HttpStatus.OK);
@@ -33,6 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @SecurityRequirements
     public SuccessResponse register(@RequestBody RegisterRequest request) {
         UserResponse response = authService.register(request);
 
