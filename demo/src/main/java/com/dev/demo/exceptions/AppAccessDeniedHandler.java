@@ -1,5 +1,6 @@
 package com.dev.demo.exceptions;
 
+import com.dev.demo.helpers.Constants;
 import com.dev.demo.helpers.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ public class AppAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        String message = "You don't have permission to access or use this resource";
+        String message = Constants.EXCEPTION_MESSAGES.ACCESS_DENIED;
 
         Utils.setFilterExceptionResponse(message, response,
                 HttpServletResponse.SC_FORBIDDEN, request.getRequestURI());

@@ -22,4 +22,17 @@ public class Utils {
 
         objectMapper.writeValue(outputStream, errorResponse);
     }
+
+    public static void setFilterExceptionResponse(String message, HttpServletResponse response, int statusCode,
+                                                  String requestURI, String details) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(message, details, requestURI);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(statusCode);
+
+        OutputStream outputStream = response.getOutputStream();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.writeValue(outputStream, errorResponse);
+    }
 }
