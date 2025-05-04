@@ -40,6 +40,6 @@ public class AuthController {
         UserResponse response = authService.register(request);
 
         return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
-                "Register"), null, HttpStatus.CREATED);
+                "Register"), HttpStatus.CREATED);
     }
 }
