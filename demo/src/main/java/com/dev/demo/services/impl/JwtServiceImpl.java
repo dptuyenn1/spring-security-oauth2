@@ -1,5 +1,7 @@
 package com.dev.demo.services.impl;
 
+import com.dev.demo.models.Role;
+import com.dev.demo.models.User;
 import com.dev.demo.services.JwtService;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -8,8 +10,6 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +34,11 @@ public class JwtServiceImpl implements JwtService {
     private static final String ISSUER = "ADMIN";
 
     @Override
-    public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
-        List<String> roles = authentication
-                .getAuthorities()
+    public String generateToken(User user) {
+        List<String> roles = user
+                .getRoles()
                 .stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(Role::getName)
                 .toList();
 
         Date issuedAt = new Date();
@@ -47,7 +46,7 @@ public class JwtServiceImpl implements JwtService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet
                 .Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer(ISSUER)
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)

@@ -31,8 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(HttpServletRequest request) {
-        return new ErrorResponse("Authentication failed! Invalid username or password",
-                request.getRequestURI());
+    public ErrorResponse handleException(final AuthenticationException ex, HttpServletRequest request) {
+        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
     }
 }

@@ -1,12 +1,12 @@
 package com.dev.demo.services;
 
-import org.springframework.security.core.Authentication;
+import com.dev.demo.models.User;
 
 import javax.crypto.SecretKey;
 
 public interface JwtService {
 
-    String generateToken(Authentication authentication);
+    String generateToken(User user);
 
     SecretKey getSecretKey();
 }
