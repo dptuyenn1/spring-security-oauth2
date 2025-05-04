@@ -23,6 +23,7 @@ public class OpenAPIConfig {
                                 .name(SECURITY_SCHEME_NAME)
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme(SCHEME)
-                                .bearerFormat(BEARER_FORMAT)));
+                                .bearerFormat(BEARER_FORMAT)
+                                .in(SecurityScheme.In.HEADER)));
     }
 }
