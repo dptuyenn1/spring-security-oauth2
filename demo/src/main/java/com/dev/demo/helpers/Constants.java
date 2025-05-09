@@ -30,9 +30,10 @@ public class Constants {
         public static final String SUCCESS = "{0} successfully";
     }
 
-    public static class OTHERS {
+    public static class API {
 
-        public static final String API_PREFIX = "/api";
-        public static final String API_VERSION = "v1";
+        public static final String PATH_PREFIX_FORMAT = "/%s/%s";
+        public static final String PREFIX = "api";
+        public static final String VERSION = "v1";
     }
 }
