@@ -40,20 +40,19 @@ public class SecurityConfig {
     //endregion
 
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
-    private static final String[] PROTECTED_ENDPOINTS;
     private static final String[] PUBLIC_ENDPOINTS;
+    private static final String[] PROTECTED_ENDPOINTS;
 
     static {
         Utils.addEndpointsPrefix(AUTH_PUBLIC_ENDPOINTS, AUTH_PROTECTED_ENDPOINTS);
 
-        PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS,
-                Arrays
-                        .stream(ArrayUtils.concat(AUTH_PUBLIC_ENDPOINTS))
-                        .map(StringBuilder::toString)
-                        .toArray(String[]::new));
+        PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS, Arrays
+                .stream(AUTH_PUBLIC_ENDPOINTS)
+                .map(StringBuilder::toString)
+                .toArray(String[]::new));
 
         PROTECTED_ENDPOINTS = Arrays
-                .stream(ArrayUtils.concat(AUTH_PROTECTED_ENDPOINTS))
+                .stream(AUTH_PROTECTED_ENDPOINTS)
                 .map(StringBuilder::toString)
                 .toArray(String[]::new);
     }
