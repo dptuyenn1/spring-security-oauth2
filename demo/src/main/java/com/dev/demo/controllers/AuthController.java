@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.text.MessageFormat;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @CrossOrigin
 public class AuthController {

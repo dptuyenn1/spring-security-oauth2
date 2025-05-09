@@ -24,9 +24,9 @@ public class SecurityConfig {
 
     private static final String CLAIMS_NAME = "roles";
 
-    private static final String[] PUBLIC_ENDPOINTS = {"/api/auth/login", "/api/auth/register",
+    private static final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/login", "/api/v1/auth/register",
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
-    private static final String[] PROTECTED_ENDPOINTS = {"/api/auth/me"};
+    private static final String[] PROTECTED_ENDPOINTS = {"/api/v1/auth/me"};
     private static final String[] ROLES = {"USER", "ADMIN", "SUPER_ADMIN"};
 
     private final JwtService jwtService;
