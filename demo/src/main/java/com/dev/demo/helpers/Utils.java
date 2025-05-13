@@ -36,19 +36,19 @@ public class Utils {
         objectMapper.writeValue(outputStream, errorResponse);
     }
 
-    public static void addEndpointsPrefix(StringBuilder[]... endpointsList) {
+    public static void addEndpointsPrefix(StringBuilder[]... collection) {
         String prefix = String.format(Constants.API.PATH_PREFIX_FORMAT,
                 Constants.API.PREFIX, Constants.API.VERSION);
 
-        if (endpointsList.length == 1) {
-            for (StringBuilder endpoint : endpointsList[0]) {
+        if (collection.length == 1) {
+            for (StringBuilder endpoint : collection[0]) {
                 endpoint.insert(0, prefix);
             }
 
             return;
         }
 
-        for (StringBuilder[] endpoints : endpointsList) {
+        for (StringBuilder[] endpoints : collection) {
             for (StringBuilder endpoint : endpoints) {
                 endpoint.insert(0, prefix);
             }
