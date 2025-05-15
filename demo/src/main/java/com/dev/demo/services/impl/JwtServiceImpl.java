@@ -1,12 +1,10 @@
 package com.dev.demo.services.impl;
 
+import com.dev.demo.helpers.Constants;
 import com.dev.demo.models.Role;
 import com.dev.demo.models.User;
 import com.dev.demo.services.JwtService;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -21,17 +19,8 @@ import java.util.List;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private static final int DAYS_OF_WEEK = 7;
-    private static final int HOURS_OF_DAY = 24;
-    private static final int MINUTES_OF_HOUR = 60;
-    private static final int SECONDS_OF_MINUTE = 60;
-    private static final int MILLISECONDS_OF_SECOND = 1000;
-    private static final int EXPIRATION_TIME = DAYS_OF_WEEK * HOURS_OF_DAY * MINUTES_OF_HOUR
-            * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
-
     private static final String KEY = "vlywKvNRfV2EtFyJAY7ZOtNZdK2Na8wAAydvd9iZZkqswoqoadtLsrfnUjvU86ve";
-    private static final MacAlgorithm ALGORITHM = MacAlgorithm.HS512;
-    private static final String ISSUER = "ADMIN";
+    private static final String ROLES_CLAIM = "roles";
 
     @Override
     public String generateToken(User user) {
@@ -42,18 +31,23 @@ public class JwtServiceImpl implements JwtService {
                 .toList();
 
         Date issuedAt = new Date();
-        Date expiredAt = new Date(issuedAt.getTime() + EXPIRATION_TIME);
+        Date expiredAt = new Date(issuedAt.getTime() + Constants.JWT.DURATION);
+
+        JWSHeader header = new JWSHeader
+                .Builder(JWSAlgorithm.HS256)
+                .type(JOSEObjectType.JWT)
+                .build();
 
         JWTClaimsSet claimsSet = new JWTClaimsSet
                 .Builder()
                 .subject(user.getUsername())
-                .issuer(ISSUER)
+                .issuer(Constants.JWT.ISSUER)
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)
-                .claim("roles", roles)
+                .claim(ROLES_CLAIM, roles)
                 .build();
 
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet);
 
         try {
             JWSSigner signer = new MACSigner(KEY);
@@ -67,6 +61,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public SecretKey getSecretKey() {
-        return new SecretKeySpec(KEY.getBytes(), ALGORITHM.getName());
+        return new SecretKeySpec(KEY.getBytes(), MacAlgorithm.HS512.getName());
     }
 }
