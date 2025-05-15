@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
 
     @Override
     public User create(User user) {
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         else
             roles = requestRoles.stream().map(roleService::findByName).collect(Collectors.toSet());
 
-        User user = mapper.toUser(request);
+        User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);

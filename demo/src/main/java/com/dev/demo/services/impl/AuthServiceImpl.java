@@ -21,7 +21,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -42,11 +42,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse me(String username) {
-        return mapper.toUserResponse(userService.findByUsername(username));
+        return userMapper.toUserResponse(userService.findByUsername(username));
     }
 
     @Override
     public UserResponse register(RegisterRequest request) {
-        return mapper.toUserResponse(userService.create(request));
+        return userMapper.toUserResponse(userService.create(request));
     }
 }
