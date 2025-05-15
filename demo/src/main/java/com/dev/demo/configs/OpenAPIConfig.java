@@ -1,5 +1,6 @@
 package com.dev.demo.configs;
 
+import com.dev.demo.helpers.Constants;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -10,20 +11,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAPIConfig {
 
-    private static final String SECURITY_SCHEME_NAME = "Bearer Authentication";
-    private static final String SCHEME = "bearer";
-    private static final String BEARER_FORMAT = "JWT";
-
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
-                .components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
-                        new SecurityScheme()
-                                .name(SECURITY_SCHEME_NAME)
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme(SCHEME)
-                                .bearerFormat(BEARER_FORMAT)
-                                .in(SecurityScheme.In.HEADER)));
+                .addSecurityItem(new SecurityRequirement()
+                        .addList(Constants.OPEN_API.SECURITY_SCHEME_NAME))
+                .components(new Components()
+                        .addSecuritySchemes(Constants.OPEN_API.SECURITY_SCHEME_NAME,
+                                new SecurityScheme()
+                                        .name(Constants.OPEN_API.SECURITY_SCHEME_NAME)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme(Constants.OPEN_API.SCHEME)
+                                        .bearerFormat(Constants.OPEN_API.BEARER_FORMAT)
+                                        .in(SecurityScheme.In.HEADER)));
     }
 }

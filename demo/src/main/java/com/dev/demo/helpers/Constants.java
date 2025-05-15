@@ -14,6 +14,19 @@ public class Constants {
         public static final String INVERSE_JOIN_COLUMN = "role_id";
     }
 
+    public static class JWT {
+
+        public static final String ISSUER = "ADMIN";
+
+        private static final int DAYS_OF_WEEK = 7;
+        private static final int HOURS_OF_DAY = 24;
+        private static final int MINUTES_OF_HOUR = 60;
+        private static final int SECONDS_OF_MINUTE = 60;
+        private static final int MILLISECONDS_OF_SECOND = 1000;
+        public static final int DURATION = DAYS_OF_WEEK * HOURS_OF_DAY * MINUTES_OF_HOUR
+                * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
+    }
+
     public static class EXCEPTION_MESSAGES {
 
         public static final String NOT_FOUND = "{0} not found!";
@@ -30,10 +43,24 @@ public class Constants {
         public static final String SUCCESS = "{0} successfully";
     }
 
+    public static class OPEN_API {
+
+        public static final String SECURITY_SCHEME_NAME = "Bearer Authentication";
+        public static final String SCHEME = "bearer";
+        public static final String BEARER_FORMAT = "JWT";
+    }
+
     public static class API {
 
-        public static final String PATH_PREFIX_FORMAT = "/%s/%s";
-        public static final String PREFIX = "api";
-        public static final String VERSION = "v1";
+        private static final String PATH_PREFIX_FORMAT = "/%s/%s";
+        private static final String PREFIX = "api";
+        private static final String VERSION = "v1";
+        public static final String PATH_PREFIX = String.format(PATH_PREFIX_FORMAT, PREFIX, VERSION);
+    }
+
+    public static class WEB_CONFIG {
+
+        public static final String PATH_PREFIX = API.PATH_PREFIX;
+        public static final String API_BASE_PACKAGE = "com.dev.demo.controllers";
     }
 }

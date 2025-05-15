@@ -39,9 +39,6 @@ public class Utils {
     }
 
     public static String[] getEndpointsWithPrefix(String... endpoints) {
-        String prefix = String.format(Constants.API.PATH_PREFIX_FORMAT,
-                Constants.API.PREFIX, Constants.API.VERSION);
-
         List<StringBuilder> stringBuilders = new ArrayList<>();
 
         if (endpoints.length == 1)
@@ -52,7 +49,7 @@ public class Utils {
 
         return stringBuilders
                 .stream()
-                .map(item -> item.insert(0, prefix).toString())
+                .map(item -> item.insert(0, Constants.API.PATH_PREFIX).toString())
                 .toArray(String[]::new);
     }
 }

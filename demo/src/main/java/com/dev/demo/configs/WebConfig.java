@@ -10,15 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String PATH_PREFIX = String.format(Constants.API.PATH_PREFIX_FORMAT,
-            Constants.API.PREFIX, Constants.API.VERSION);
-    private static final String BASE_PACKAGE = "com.dev.demo.controllers";
-
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.addPathPrefix(
-                PATH_PREFIX, HandlerTypePredicate
+        configurer.addPathPrefix(Constants.WEB_CONFIG.PATH_PREFIX,
+                HandlerTypePredicate
                         .forAnnotation(RestController.class)
-                        .and(HandlerTypePredicate.forBasePackage(BASE_PACKAGE)));
+                        .and(HandlerTypePredicate
+                                .forBasePackage(Constants.WEB_CONFIG.API_BASE_PACKAGE)));
     }
 }

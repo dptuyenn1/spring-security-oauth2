@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -67,7 +68,10 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withSecretKey(jwtService.getSecretKey()).build();
+        return NimbusJwtDecoder
+                .withSecretKey(jwtService.getSecretKey())
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
     }
 
     @Bean
@@ -79,6 +83,7 @@ public class SecurityConfig {
         because use hasAnyRole => the role already has prefix: ROLE_<ROLE_NAME>
         call setAuthorityPrefix to avoid automatically defined prefix: SCOPE_ROLE_<ROLE_NAME>
          */
+
         grantedAuthoritiesConverter.setAuthoritiesClaimName(CLAIMS_NAME);
         grantedAuthoritiesConverter.setAuthorityPrefix("");
 
