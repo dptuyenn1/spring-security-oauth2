@@ -19,8 +19,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,33 +27,15 @@ public class SecurityConfig {
     private static final String CLAIMS_NAME = "roles";
     private static final String[] ROLES = {"USER", "ADMIN", "SUPER_ADMIN"};
 
-    //region App endpoints
-    private static final StringBuilder[] AUTH_PUBLIC_ENDPOINTS = {
-            new StringBuilder("/auth/login"),
-            new StringBuilder("/auth/register")
-    };
-    private static final StringBuilder[] AUTH_PROTECTED_ENDPOINTS = {
-            new StringBuilder("/auth/me")
-    };
-    //endregion
-
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
-    private static final String[] PUBLIC_ENDPOINTS;
-    private static final String[] PROTECTED_ENDPOINTS;
-
-    static {
-        Utils.addEndpointsPrefix(AUTH_PUBLIC_ENDPOINTS, AUTH_PROTECTED_ENDPOINTS);
-
-        PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS, Arrays
-                .stream(AUTH_PUBLIC_ENDPOINTS)
-                .map(StringBuilder::toString)
-                .toArray(String[]::new));
-
-        PROTECTED_ENDPOINTS = Arrays
-                .stream(AUTH_PROTECTED_ENDPOINTS)
-                .map(StringBuilder::toString)
-                .toArray(String[]::new);
-    }
+    private static final String[] PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS,
+            Utils.getEndpointsWithPrefix(
+                    "/auth/login", "/auth/register"
+            ));
+    private static final String[] PROTECTED_ENDPOINTS =
+            Utils.getEndpointsWithPrefix(
+                    "/auth/me"
+            );
 
     private final JwtService jwtService;
     private final AuthenticationEntryPoint authenticationEntryPoint;

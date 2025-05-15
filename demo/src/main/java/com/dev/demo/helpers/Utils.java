@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
@@ -36,22 +38,21 @@ public class Utils {
         objectMapper.writeValue(outputStream, errorResponse);
     }
 
-    public static void addEndpointsPrefix(StringBuilder[]... collection) {
+    public static String[] getEndpointsWithPrefix(String... endpoints) {
         String prefix = String.format(Constants.API.PATH_PREFIX_FORMAT,
                 Constants.API.PREFIX, Constants.API.VERSION);
 
-        if (collection.length == 1) {
-            for (StringBuilder endpoint : collection[0]) {
-                endpoint.insert(0, prefix);
-            }
+        List<StringBuilder> stringBuilders = new ArrayList<>();
 
-            return;
-        }
+        if (endpoints.length == 1)
+            stringBuilders.add(new StringBuilder(endpoints[0]));
+        else
+            for (String endpoint : endpoints)
+                stringBuilders.add(new StringBuilder(endpoint));
 
-        for (StringBuilder[] endpoints : collection) {
-            for (StringBuilder endpoint : endpoints) {
-                endpoint.insert(0, prefix);
-            }
-        }
+        return stringBuilders
+                .stream()
+                .map(item -> item.insert(0, prefix).toString())
+                .toArray(String[]::new);
     }
 }
