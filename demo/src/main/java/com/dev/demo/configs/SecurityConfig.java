@@ -25,7 +25,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private static final String CLAIMS_NAME = "roles";
+    private static final String CLAIM_NAME = "roles";
     private static final String[] ROLES = {"USER", "ADMIN", "SUPER_ADMIN"};
 
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
@@ -79,12 +79,12 @@ public class SecurityConfig {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
         /*
-        setAuthoritiesClaimName => let the converter know which claims contains the roles
+        setAuthoritiesClaimName => let the converter know which claim contains the roles
         because use hasAnyRole => the role already has prefix: ROLE_<ROLE_NAME>
         call setAuthorityPrefix to avoid automatically defined prefix: SCOPE_ROLE_<ROLE_NAME>
          */
 
-        grantedAuthoritiesConverter.setAuthoritiesClaimName(CLAIMS_NAME);
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(CLAIM_NAME);
         grantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
