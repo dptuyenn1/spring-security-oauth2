@@ -8,6 +8,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,10 @@ import java.util.List;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private static final String KEY = "vlywKvNRfV2EtFyJAY7ZOtNZdK2Na8wAAydvd9iZZkqswoqoadtLsrfnUjvU86ve";
     private static final String ROLES_CLAIM = "roles";
+
+    @Value("${app.jwt.key}")
+    private String key;
 
     @Override
     public String generateToken(User user) {
@@ -50,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
 
         try {
-            JWSSigner signer = new MACSigner(KEY);
+            JWSSigner signer = new MACSigner(key);
             signedJWT.sign(signer);
         } catch (JOSEException exception) {
             throw new RuntimeException(exception.getMessage());
@@ -61,6 +64,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public SecretKey getSecretKey() {
-        return new SecretKeySpec(KEY.getBytes(), MacAlgorithm.HS512.getName());
+        return new SecretKeySpec(key.getBytes(), MacAlgorithm.HS512.getName());
     }
 }
