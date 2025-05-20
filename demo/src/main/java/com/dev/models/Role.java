@@ -1,5 +1,6 @@
 package com.dev.models;
 
+import com.dev.enums.Authority;
 import com.dev.helpers.Constants;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -22,7 +23,8 @@ public class Role extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
     @ManyToMany(mappedBy = "roles")
     @Builder.Default
     private Set<User> users = new HashSet<>();

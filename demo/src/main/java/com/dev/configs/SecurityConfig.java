@@ -1,5 +1,6 @@
 package com.dev.configs;
 
+import com.dev.enums.Authority;
 import com.dev.helpers.Utils;
 import com.dev.services.JwtService;
 import com.nimbusds.jose.util.ArrayUtils;
@@ -26,7 +27,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 public class SecurityConfig {
 
     private static final String CLAIM_NAME = "roles";
-    private static final String[] ROLES = {"USER", "ADMIN", "SUPER_ADMIN"};
 
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private static final String[] PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS,
@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(PROTECTED_ENDPOINTS)
                         .authenticated()
                         .anyRequest()
-                        .hasAnyRole(ROLES))
+                        .hasAnyAuthority(Authority.ADMIN.name()))
                 .oauth2ResourceServer(config -> config
                         .jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(authenticationEntryPoint)

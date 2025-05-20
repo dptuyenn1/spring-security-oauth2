@@ -1,5 +1,6 @@
 package com.dev.services.impl;
 
+import com.dev.enums.Authority;
 import com.dev.exceptions.NotFoundException;
 import com.dev.helpers.Constants;
 import com.dev.models.Role;
@@ -22,11 +23,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role findByName(String name) {
+    public Role findByAuthority(Authority authority) {
         return roleRepository
-                .findByName(name)
+                .findByAuthority(authority)
                 .orElseThrow(() -> new NotFoundException(
                         MessageFormat.format(Constants.EXCEPTION_MESSAGES.NOT_FOUND,
-                                "Role with name: " + name)));
+                                "Role with name: " + authority.name())));
     }
 }

@@ -1,7 +1,6 @@
 package com.dev.services.impl;
 
 import com.dev.helpers.Constants;
-import com.dev.models.Role;
 import com.dev.models.User;
 import com.dev.services.JwtService;
 import com.nimbusds.jose.*;
@@ -30,7 +29,7 @@ public class JwtServiceImpl implements JwtService {
         List<String> roles = user
                 .getRoles()
                 .stream()
-                .map(Role::getName)
+                .map(role -> role.getAuthority().name())
                 .toList();
 
         Date issuedAt = new Date();

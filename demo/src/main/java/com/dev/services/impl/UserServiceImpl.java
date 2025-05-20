@@ -1,6 +1,7 @@
 package com.dev.services.impl;
 
 import com.dev.dto.request.RegisterRequest;
+import com.dev.enums.Authority;
 import com.dev.exceptions.DuplicateException;
 import com.dev.helpers.Constants;
 import com.dev.mappers.UserMapper;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final static String ROLE_USER = "ROLE_USER";
+    private final static Authority USER = Authority.USER;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -53,9 +54,12 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
 
         if (requestRoles.isEmpty())
-            roles.add(roleService.findByName(ROLE_USER));
+            roles.add(roleService.findByAuthority(USER));
         else
-            roles = requestRoles.stream().map(roleService::findByName).collect(Collectors.toSet());
+            roles = requestRoles
+                    .stream()
+                    .map(role -> roleService.findByAuthority(Authority.valueOf(role)))
+                    .collect(Collectors.toSet());
 
         User user = userMapper.toUser(request);
 

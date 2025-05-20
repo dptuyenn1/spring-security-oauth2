@@ -1,5 +1,6 @@
 package com.dev;
 
+import com.dev.enums.Authority;
 import com.dev.models.Role;
 import com.dev.models.User;
 import com.dev.services.UserService;
@@ -18,15 +19,13 @@ public class DemoApplication {
     @Bean
     CommandLineRunner runner(UserService userService) {
         return args -> {
-            Role roleUser = Role.builder().name("ROLE_USER").build();
-            Role roleAdmin = Role.builder().name("ROLE_ADMIN").build();
-            Role roleSuperAdmin = Role.builder().name("ROLE_SUPER_ADMIN").build();
+            Role roleUser = Role.builder().authority(Authority.USER).build();
+            Role roleAdmin = Role.builder().authority(Authority.ADMIN).build();
 
             User admin = User.builder().username("admin").password("123").build();
 
             admin.getRoles().add(roleUser);
             admin.getRoles().add(roleAdmin);
-            admin.getRoles().add(roleSuperAdmin);
 
             userService.create(admin);
         };
