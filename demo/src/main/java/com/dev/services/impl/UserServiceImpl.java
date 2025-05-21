@@ -5,7 +5,6 @@ import com.dev.enums.Authority;
 import com.dev.exceptions.DuplicateException;
 import com.dev.helpers.Constants;
 import com.dev.mappers.UserMapper;
-import com.dev.models.Role;
 import com.dev.models.User;
 import com.dev.repositories.UserRepository;
 import com.dev.services.RoleService;
@@ -16,9 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,22 +45,10 @@ public class UserServiceImpl implements UserService {
                     MessageFormat.format(Constants.EXCEPTION_MESSAGES.DUPLICATED,
                             "User with username: " + username));
 
-        Set<String> requestRoles = request.getRoles();
-
-        Set<Role> roles = new HashSet<>();
-
-        if (requestRoles.isEmpty())
-            roles.add(roleService.findByAuthority(USER));
-        else
-            roles = requestRoles
-                    .stream()
-                    .map(role -> roleService.findByAuthority(Authority.valueOf(role)))
-                    .collect(Collectors.toSet());
-
         User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(roles);
+        user.getRoles().add(roleService.findByAuthority(USER));
 
         return userRepository.save(user);
     }

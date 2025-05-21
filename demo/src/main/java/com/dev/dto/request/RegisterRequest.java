@@ -1,12 +1,8 @@
 package com.dev.dto.request;
 
-import com.dev.annotations.InAuthority;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,6 +16,4 @@ public class RegisterRequest {
     private String username;
     @NotBlank
     private String password;
-    @InAuthority
-    private Set<String> roles = new HashSet<>();
 }
