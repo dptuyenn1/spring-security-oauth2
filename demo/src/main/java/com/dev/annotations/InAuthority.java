@@ -1,6 +1,6 @@
 package com.dev.annotations;
 
-import com.dev.validators.StringsInCollectionValidator;
+import com.dev.validators.InAuthorityValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,12 +9,10 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = StringsInCollectionValidator.class)
-public @interface StringsInCollection {
+@Constraint(validatedBy = InAuthorityValidator.class)
+public @interface InAuthority {
 
-    String[] values();
-
-    String message() default "must be any of {values}";
+    String message() default "";
 
     Class<?>[] groups() default {};
 
