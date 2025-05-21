@@ -3,12 +3,12 @@ package com.dev.exceptions;
 import com.dev.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -18,49 +18,33 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final Exception ex, HttpServletRequest request) {
-        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
-    }
+    public ResponseEntity<ErrorResponse<?>> handleException(final Exception ex, HttpServletRequest request) {
+        ErrorResponse<?> errorResponse = new ErrorResponse<>(ex.getMessage(), request.getRequestURI());
 
-    @ExceptionHandler(value = NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleException(final NotFoundException ex, HttpServletRequest request) {
-        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
-    }
+        ResponseEntity.BodyBuilder bodyBuilder = switch (ex) {
+            case NotFoundException exception -> ResponseEntity.status(HttpStatus.NOT_FOUND);
+            case UsernameNotFoundException exception -> ResponseEntity.status(HttpStatus.NOT_FOUND);
+            case DuplicateException exception -> ResponseEntity.status(HttpStatus.CONFLICT);
+            case AuthenticationException exception -> ResponseEntity.status(HttpStatus.UNAUTHORIZED);
+            case MethodArgumentNotValidException exception -> {
+                Map<String, String> errors = new HashMap<>();
 
-    @ExceptionHandler(value = UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleException(final UsernameNotFoundException ex, HttpServletRequest request) {
-        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
-    }
+                exception.getBindingResult().getAllErrors().forEach((error) -> {
+                    FieldError field = (FieldError) error;
 
-    @ExceptionHandler(value = DuplicateException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleException(final DuplicateException ex, HttpServletRequest request) {
-        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
-    }
+                    String fieldName = field.getField();
+                    String errorMessage = field.getDefaultMessage();
 
-    @ExceptionHandler(AuthenticationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final AuthenticationException ex, HttpServletRequest request) {
-        return new ErrorResponse(ex.getMessage(), request.getRequestURI());
-    }
+                    errors.put(fieldName, errorMessage);
+                });
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final MethodArgumentNotValidException ex, HttpServletRequest request) {
-        Map<String, String> errors = new HashMap<>();
+                errorResponse = new ErrorResponse<>(errors, request.getRequestURI());
 
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            FieldError field = (FieldError) error;
+                yield ResponseEntity.status(HttpStatus.BAD_REQUEST);
+            }
+            default -> ResponseEntity.status(HttpStatus.BAD_REQUEST);
+        };
 
-            String fieldName = field.getField();
-            String errorMessage = field.getDefaultMessage();
-
-            errors.put(fieldName, errorMessage);
-        });
-
-        return new ErrorResponse(errors, request.getRequestURI());
+        return bodyBuilder.body(errorResponse);
     }
 }
