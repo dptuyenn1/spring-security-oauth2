@@ -20,8 +20,6 @@ import java.text.MessageFormat;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final static Authority USER = Authority.USER;
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
@@ -48,7 +46,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.getRoles().add(roleService.findByAuthority(USER));
+        user.getRoles().add(roleService.findByAuthority(Authority.USER));
 
         return userRepository.save(user);
     }

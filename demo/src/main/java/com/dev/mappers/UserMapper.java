@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toUser(UserResponse userResponse);
-
     UserResponse toUserResponse(User user);
 
     @Mapping(target = "roles", ignore = true)
