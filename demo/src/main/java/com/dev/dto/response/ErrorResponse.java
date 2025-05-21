@@ -5,21 +5,18 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
+public class ErrorResponse<T> extends Response<T> {
 
-    private final boolean success = false;
-    private final Object message;
-    private final String details;
-    private final String path;
+    private String details;
+    private String path;
 
-    public ErrorResponse(Object message, String path) {
-        this.message = message;
+    public ErrorResponse(T message, String path) {
+        super(false, message);
         this.path = path;
-        this.details = null;
     }
 
-    public ErrorResponse(Object message, String details, String path) {
-        this.message = message;
+    public ErrorResponse(T message, String details, String path) {
+        this(message, details);
         this.path = path;
         this.details = details;
     }

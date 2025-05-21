@@ -14,7 +14,7 @@ public class Utils {
 
     public static void setFilterExceptionResponse(String message, HttpServletResponse response,
                                                   int statusCode, String requestURI) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(message, requestURI);
+        ErrorResponse<String> errorResponse = new ErrorResponse<>(message, requestURI);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(statusCode);
@@ -27,7 +27,7 @@ public class Utils {
 
     public static void setFilterExceptionResponse(String message, HttpServletResponse response, int statusCode,
                                                   String requestURI, String details) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(message, details, requestURI);
+        ErrorResponse<String> errorResponse = new ErrorResponse<>(message, details, requestURI);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(statusCode);
