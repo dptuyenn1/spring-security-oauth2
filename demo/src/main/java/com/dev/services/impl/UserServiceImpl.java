@@ -36,14 +36,14 @@ public class UserServiceImpl implements UserService {
     public User create(RegisterRequest request) {
         String username = request.getUsername();
 
-        User u = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
 
-        if (u != null)
+        if (user != null)
             throw new DuplicateException(
                     MessageFormat.format(Constants.EXCEPTION_MESSAGES.DUPLICATED,
                             "User with username: " + username));
 
-        User user = userMapper.toUser(request);
+        user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getRoles().add(roleService.findByAuthority(Authority.USER));
