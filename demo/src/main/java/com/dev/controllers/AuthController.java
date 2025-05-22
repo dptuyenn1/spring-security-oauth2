@@ -25,23 +25,23 @@ public class AuthController {
 
     @PostMapping("/login")
     @SecurityRequirements
-    public SuccessResponse<String> login(@RequestBody @Valid LoginRequest request) {
-        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+    public SuccessResponse login(@RequestBody @Valid LoginRequest request) {
+        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Login"), authService.login(request), HttpStatus.OK);
     }
 
     @GetMapping("/me")
-    public SuccessResponse<String> me(Principal principal) {
-        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+    public SuccessResponse me(Principal principal) {
+        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Get user details"), authService.me(principal.getName()), HttpStatus.OK);
     }
 
     @PostMapping("/register")
     @SecurityRequirements
-    public SuccessResponse<String> register(@RequestBody @Valid RegisterRequest request) {
+    public SuccessResponse register(@RequestBody @Valid RegisterRequest request) {
         UserResponse response = authService.register(request);
 
-        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Register"), HttpStatus.CREATED);
     }
 }
