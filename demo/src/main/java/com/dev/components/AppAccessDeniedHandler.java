@@ -1,4 +1,4 @@
-package com.dev.exceptions;
+package com.dev.components;
 
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
