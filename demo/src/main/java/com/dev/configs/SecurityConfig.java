@@ -3,13 +3,13 @@ package com.dev.configs;
 import com.dev.enums.Authority;
 import com.dev.helpers.Utils;
 import com.dev.services.JwtService;
-import com.nimbusds.jose.util.ArrayUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -29,10 +29,10 @@ public class SecurityConfig {
     private static final String CLAIM_NAME = "roles";
 
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
-    private static final String[] PUBLIC_ENDPOINTS = ArrayUtils.concat(SWAGGER_ENDPOINTS,
+    private static final String[] PUBLIC_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
                     "/auth/login", "/auth/register"
-            ));
+            );
     private static final String[] PROTECTED_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
                     "/auth/me"
@@ -64,6 +64,11 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(SWAGGER_ENDPOINTS);
     }
 
     @Bean
