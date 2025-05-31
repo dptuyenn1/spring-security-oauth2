@@ -2,6 +2,7 @@ package com.dev.controllers;
 
 import com.dev.dto.request.LoginRequest;
 import com.dev.dto.request.RegisterRequest;
+import com.dev.dto.response.AuthResponse;
 import com.dev.dto.response.SuccessResponse;
 import com.dev.dto.response.UserResponse;
 import com.dev.helpers.Constants;
@@ -25,23 +26,23 @@ public class AuthController {
 
     @PostMapping("/login")
     @SecurityRequirements
-    public SuccessResponse login(@RequestBody @Valid LoginRequest request) {
-        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+    public SuccessResponse<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Login"), authService.login(request), HttpStatus.OK);
     }
 
     @GetMapping("/me")
-    public SuccessResponse me(Principal principal) {
-        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+    public SuccessResponse<UserResponse> me(Principal principal) {
+        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Get user details"), authService.me(principal.getName()), HttpStatus.OK);
     }
 
     @PostMapping("/register")
     @SecurityRequirements
-    public SuccessResponse register(@RequestBody @Valid RegisterRequest request) {
+    public SuccessResponse<Void> register(@RequestBody @Valid RegisterRequest request) {
         UserResponse response = authService.register(request);
 
-        return new SuccessResponse(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
                 "Register"), HttpStatus.CREATED);
     }
 }

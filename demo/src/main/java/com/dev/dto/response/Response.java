@@ -3,12 +3,12 @@ package com.dev.dto.response;
 import lombok.Getter;
 
 @Getter
-public abstract class Response {
+public abstract class Response<T> {
 
     private final boolean success;
-    private final Object message;
+    private final T message;
 
-    public Response(boolean success, Object message) {
+    public Response(boolean success, T message) {
         this.success = success;
         this.message = message;
     }

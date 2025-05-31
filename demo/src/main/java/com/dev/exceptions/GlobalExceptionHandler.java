@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(Exception exception, HttpServletRequest request) {
+    public ErrorResponse<?> handleException(Exception exception, HttpServletRequest request) {
         if (exception instanceof MethodArgumentNotValidException ex) {
             Map<String, String> errors = new HashMap<>();
 
@@ -32,27 +32,27 @@ public class GlobalExceptionHandler {
                 errors.put(fieldName, errorMessage);
             });
 
-            return new ErrorResponse(errors, request.getRequestURI());
+            return new ErrorResponse<>(errors, request.getRequestURI());
         }
 
-        return new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(value = {NotFoundException.class, UsernameNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final Exception exception, HttpServletRequest request) {
-        return new ErrorResponse(exception.getMessage(), request.getRequestURI());
+    public ErrorResponse<String> handleNotFoundException(final Exception exception, HttpServletRequest request) {
+        return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(value = DuplicateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleException(final DuplicateException exception, HttpServletRequest request) {
-        return new ErrorResponse(exception.getMessage(), request.getRequestURI());
+    public ErrorResponse<String> handleException(final DuplicateException exception, HttpServletRequest request) {
+        return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(value = AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleException(final AuthenticationException exception, HttpServletRequest request) {
-        return new ErrorResponse(exception.getMessage(), request.getRequestURI());
+    public ErrorResponse<String> handleException(final AuthenticationException exception, HttpServletRequest request) {
+        return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 }
