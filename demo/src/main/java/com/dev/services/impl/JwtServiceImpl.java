@@ -8,13 +8,12 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -33,7 +32,7 @@ public class JwtServiceImpl implements JwtService {
                 .toList();
 
         Date issuedAt = new Date();
-        Date expiredAt = new Date(issuedAt.getTime() + Constants.JWT.DURATION);
+        Date expiredAt = new Date(issuedAt.getTime() + Constants.JWT.ACCESS_TOKEN.DURATION);
 
         JWSHeader header = new JWSHeader
                 .Builder(JWSAlgorithm.HS256)
@@ -47,6 +46,7 @@ public class JwtServiceImpl implements JwtService {
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)
                 .claim(ROLES_CLAIM, roles)
+                .jwtID(UUID.randomUUID().toString())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
@@ -55,14 +55,9 @@ public class JwtServiceImpl implements JwtService {
             JWSSigner signer = new MACSigner(key);
             signedJWT.sign(signer);
         } catch (JOSEException exception) {
-            throw new RuntimeException(exception.getMessage());
+            throw new JwtException(exception.getMessage());
         }
 
         return signedJWT.serialize();
-    }
-
-    @Override
-    public SecretKey getSecretKey() {
-        return new SecretKeySpec(key.getBytes(), MacAlgorithm.HS512.getName());
     }
 }

@@ -2,8 +2,8 @@ package com.dev.configs;
 
 import com.dev.enums.Authority;
 import com.dev.helpers.Utils;
-import com.dev.services.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+
+import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +40,11 @@ public class SecurityConfig {
                     "/auth/me"
             );
 
-    private final JwtService jwtService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
+
+    @Value("${app.jwt.key}")
+    private String key;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -73,8 +77,10 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), MacAlgorithm.HS512.getName());
+
         return NimbusJwtDecoder
-                .withSecretKey(jwtService.getSecretKey())
+                .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
     }
