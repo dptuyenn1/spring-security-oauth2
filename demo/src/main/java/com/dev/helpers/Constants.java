@@ -18,12 +18,13 @@ public class Constants {
 
         public static final String ISSUER = "ADMIN";
 
+        private static final int MILLISECONDS_OF_SECOND = 1000;
+
         public static class ACCESS_TOKEN {
             private static final int DAYS_OF_WEEK = 1;
             private static final int HOURS_OF_DAY = 1;
             private static final int MINUTES_OF_HOUR = 60;
             private static final int SECONDS_OF_MINUTE = 60;
-            private static final int MILLISECONDS_OF_SECOND = 1000;
             public static final int DURATION = DAYS_OF_WEEK * HOURS_OF_DAY * MINUTES_OF_HOUR
                     * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
         }
@@ -33,7 +34,6 @@ public class Constants {
             private static final int HOURS_OF_DAY = 24;
             private static final int MINUTES_OF_HOUR = 60;
             private static final int SECONDS_OF_MINUTE = 60;
-            private static final int MILLISECONDS_OF_SECOND = 1000;
             public static final int DURATION = DAYS_OF_WEEK * HOURS_OF_DAY * MINUTES_OF_HOUR
                     * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
         }
