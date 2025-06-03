@@ -12,5 +12,7 @@ public abstract class BaseDTO implements Serializable {
 
     private Date createdAt;
     private Date updatedAt;
+    private String createdBy;
+    private String updatedBy;
     private Boolean isActive;
 }
