@@ -26,7 +26,7 @@ public class AuditAwareImpl implements AuditorAware<String> {
                 .map(Authentication::getName)
                 .flatMap(username -> userRepository
                         .findByUsername(username)
-                        .map(user -> String.format("%s %s", user.getLastName(), user.getFirstName()))
-                        .or(() -> Optional.of(Constants.AUDIT_AWARE.DEFAULT_NAME)));
+                        .map(user -> String.format("%s %s", user.getLastName(), user.getFirstName())))
+                .or(() -> Optional.of(Constants.AUDIT_AWARE.DEFAULT_NAME));
     }
 }
