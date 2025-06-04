@@ -78,4 +78,9 @@ public class Constants {
         private static final String PACKAGE = "controllers";
         public static final String API_BASE_PACKAGE = String.format(API_BASE_PACKAGE_FORMAT, ROOT, PACKAGE);
     }
+
+    public static class AUDIT_AWARE {
+
+        public static final String DEFAULT_NAME = "SYSTEM";
+    }
 }
