@@ -1,8 +1,12 @@
 package com.dev.services.impl;
 
+import com.dev.dto.request.RoleRequest;
+import com.dev.dto.response.RoleResponse;
 import com.dev.enums.Authority;
+import com.dev.exceptions.DuplicateException;
 import com.dev.exceptions.NotFoundException;
 import com.dev.helpers.Constants;
+import com.dev.mappers.RoleMapper;
 import com.dev.models.Role;
 import com.dev.repositories.RoleRepository;
 import com.dev.services.RoleService;
@@ -16,10 +20,25 @@ import java.text.MessageFormat;
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
+    private final RoleMapper roleMapper;
 
     @Override
     public Role create(Role role) {
         return roleRepository.save(role);
+    }
+
+    @Override
+    public RoleResponse create(RoleRequest request) {
+        Role role = roleRepository.findByAuthority(request.getAuthority()).orElse(null);
+
+        if (role != null)
+            throw new DuplicateException(
+                    MessageFormat.format(Constants.EXCEPTION_MESSAGES.DUPLICATED,
+                            "Role with authority: " + request.getAuthority()));
+
+        role = roleMapper.toRole(request);
+
+        return roleMapper.toRoleResponse(roleRepository.save(role));
     }
 
     @Override
