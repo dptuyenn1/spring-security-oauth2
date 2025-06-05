@@ -10,11 +10,14 @@ import com.dev.services.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.text.MessageFormat;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,8 +29,28 @@ public class AuthController {
     @PostMapping("/login")
     @SecurityRequirements
     public SuccessResponse<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+        AuthResponse response = authService.login(request);
+
+        MultiValueMap<String, String> headers = new HttpHeaders();
+
+        headers.set(HttpHeaders.SET_COOKIE, response.getRefreshToken());
+
         return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
-                "Login"), authService.login(request), HttpStatus.OK);
+                "Login"), response, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    @SecurityRequirements
+    public SuccessResponse<AuthResponse> refresh(
+            @CookieValue(value = Constants.CONTROLLERS.AUTH.COOKIE_NAME) String refreshToken) {
+        AuthResponse response = authService.refresh(UUID.fromString(refreshToken));
+
+        MultiValueMap<String, String> headers = new HttpHeaders();
+
+        headers.set(HttpHeaders.SET_COOKIE, response.getRefreshToken());
+
+        return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
+                "Refresh token"), response, headers, HttpStatus.OK);
     }
 
     @GetMapping("/me")

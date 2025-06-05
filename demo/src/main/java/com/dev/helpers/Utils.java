@@ -52,4 +52,8 @@ public class Utils {
                 .map(item -> item.insert(0, Constants.API.PATH_PREFIX).toString())
                 .toArray(String[]::new);
     }
+
+    public static String getEndpointWithPrefix(String endpoint) {
+        return getEndpointsWithPrefix(endpoint)[0];
+    }
 }

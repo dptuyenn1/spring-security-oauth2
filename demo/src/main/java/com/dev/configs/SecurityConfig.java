@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -37,7 +36,7 @@ public class SecurityConfig {
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private static final String[] PUBLIC_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
-                    "/auth/login", "/auth/register"
+                    "/auth/login", "/auth/register", "/auth/refresh"
             );
     private static final String[] PROTECTED_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
@@ -62,6 +61,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS)
                         .permitAll()
+                        .requestMatchers(SWAGGER_ENDPOINTS)
+                        .permitAll()
                         .requestMatchers(PROTECTED_ENDPOINTS)
                         .authenticated()
                         .anyRequest()
@@ -72,11 +73,6 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(SWAGGER_ENDPOINTS);
     }
 
     @Bean

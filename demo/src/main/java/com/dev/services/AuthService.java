@@ -5,9 +5,13 @@ import com.dev.dto.request.RegisterRequest;
 import com.dev.dto.response.AuthResponse;
 import com.dev.dto.response.UserResponse;
 
+import java.util.UUID;
+
 public interface AuthService {
 
     AuthResponse login(LoginRequest request);
+
+    AuthResponse refresh(UUID value);
 
     UserResponse me(String username);
 

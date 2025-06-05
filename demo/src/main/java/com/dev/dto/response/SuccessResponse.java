@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 public class SuccessResponse<T> extends ResponseEntity<SuccessResponse.Payload<T>> {
 
@@ -13,6 +14,10 @@ public class SuccessResponse<T> extends ResponseEntity<SuccessResponse.Payload<T
 
     public SuccessResponse(String message, T data, HttpStatusCode status) {
         super(new Payload<>(message, data), status);
+    }
+
+    public SuccessResponse(String message, T data, MultiValueMap<String, String> headers, HttpStatusCode status) {
+        super(new Payload<>(message, data), headers, status);
     }
 
     @Getter

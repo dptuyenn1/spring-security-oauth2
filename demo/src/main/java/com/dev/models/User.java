@@ -38,4 +38,6 @@ public class User extends BaseModel {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
 }

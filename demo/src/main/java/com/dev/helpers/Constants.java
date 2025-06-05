@@ -6,6 +6,7 @@ public class Constants {
 
         public static final String USER = "users";
         public static final String ROLE = "roles";
+        public static final String REFRESH_TOKEN = "refresh_tokens";
     }
 
     public static class USERS_ROLES {
@@ -82,5 +83,13 @@ public class Constants {
     public static class AUDIT_AWARE {
 
         public static final String DEFAULT_NAME = "SYSTEM";
+    }
+
+    public static class CONTROLLERS {
+
+        public static class AUTH {
+            public static final String COOKIE_NAME = "refreshToken";
+            public static final String COOKIE_PATH = "/auth/refresh";
+        }
     }
 }
