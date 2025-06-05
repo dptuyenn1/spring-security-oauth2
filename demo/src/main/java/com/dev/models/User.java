@@ -38,6 +38,7 @@ public class User extends BaseModel {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
-    @OneToOne(mappedBy = "user")
-    private RefreshToken refreshToken;
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private Set<InvalidToken> invalidTokens = new HashSet<>();
 }

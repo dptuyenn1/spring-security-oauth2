@@ -6,7 +6,7 @@ public class Constants {
 
         public static final String USER = "users";
         public static final String ROLE = "roles";
-        public static final String REFRESH_TOKEN = "refresh_tokens";
+        public static final String INVALID_TOKEN = "invalid_tokens";
     }
 
     public static class USERS_ROLES {
@@ -17,20 +17,23 @@ public class Constants {
 
     public static class JWT {
 
-        public static final String ISSUER = "ADMIN";
+        public static final String ISSUER = OTHERS.SYSTEM;
+        public static final int DEFAULT_DURATION = 5 * 60 * 1000;
 
         private static final int MILLISECONDS_OF_SECOND = 1000;
 
         public static class ACCESS_TOKEN {
+
             private static final int DAYS_OF_WEEK = 1;
             private static final int HOURS_OF_DAY = 1;
-            private static final int MINUTES_OF_HOUR = 60;
+            private static final int MINUTES_OF_HOUR = 15;
             private static final int SECONDS_OF_MINUTE = 60;
             public static final int DURATION = DAYS_OF_WEEK * HOURS_OF_DAY * MINUTES_OF_HOUR
                     * SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
         }
 
         public static class REFRESH_TOKEN {
+
             private static final int DAYS_OF_WEEK = 7;
             private static final int HOURS_OF_DAY = 24;
             private static final int MINUTES_OF_HOUR = 60;
@@ -49,6 +52,7 @@ public class Constants {
         public static final String AUTHENTICATION_FAILED = "Authentication failed! Something went wrong...";
         public static final String INVALID_TOKEN = "Invalid token (expired or incorrect signature)!";
         public static final String TOKEN_REQUIRED = "This resource requires authentication token!";
+        public static final String TOKEN_REVOKED = "Token was revoked!";
     }
 
     public static class API_RESPONSE_MESSAGES {
@@ -80,16 +84,14 @@ public class Constants {
         public static final String API_BASE_PACKAGE = String.format(API_BASE_PACKAGE_FORMAT, ROOT, PACKAGE);
     }
 
-    public static class AUDIT_AWARE {
+    public static class OTHERS {
 
-        public static final String DEFAULT_NAME = "SYSTEM";
+        public static final String SYSTEM = "SYSTEM";
     }
 
-    public static class CONTROLLERS {
+    public static class RESPONSE_COOKIE {
 
-        public static class AUTH {
-            public static final String COOKIE_NAME = "refreshToken";
-            public static final String COOKIE_PATH = "/auth/refresh";
-        }
+        public static final String NAME = "refreshToken";
+        public static final String PATH = "/auth/refresh";
     }
 }

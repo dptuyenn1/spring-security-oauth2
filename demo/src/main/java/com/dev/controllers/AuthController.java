@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,8 +41,8 @@ public class AuthController {
     @PostMapping("/refresh")
     @SecurityRequirements
     public SuccessResponse<AuthResponse> refresh(
-            @CookieValue(value = Constants.CONTROLLERS.AUTH.COOKIE_NAME) String refreshToken) {
-        AuthResponse response = authService.refresh(UUID.fromString(refreshToken));
+            @CookieValue(value = Constants.RESPONSE_COOKIE.NAME) String refreshToken) {
+        AuthResponse response = authService.refresh(refreshToken);
 
         MultiValueMap<String, String> headers = new HttpHeaders();
 

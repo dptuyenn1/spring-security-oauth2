@@ -4,15 +4,17 @@ import com.dev.dto.request.LoginRequest;
 import com.dev.dto.request.RegisterRequest;
 import com.dev.dto.response.AuthResponse;
 import com.dev.dto.response.UserResponse;
+import com.dev.enums.Type;
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
 import com.dev.mappers.UserMapper;
-import com.dev.models.RefreshToken;
+import com.dev.models.InvalidToken;
 import com.dev.models.User;
 import com.dev.services.AuthService;
+import com.dev.services.InvalidTokenService;
 import com.dev.services.JwtService;
-import com.dev.services.RefreshTokenService;
 import com.dev.services.UserService;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.SameSiteCookies;
 import org.springframework.http.HttpCookie;
@@ -33,14 +35,14 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenService refreshTokenService;
+    private final InvalidTokenService invalidTokenService;
 
-    private AuthResponse createAuthResponse(String cookieValue, String accessToken) {
+    private AuthResponse createAuthResponse(String refreshToken, String accessToken) {
         HttpCookie cookie = ResponseCookie
-                .from(Constants.CONTROLLERS.AUTH.COOKIE_NAME)
-                .value(cookieValue)
+                .from(Constants.RESPONSE_COOKIE.NAME)
+                .value(refreshToken)
                 .maxAge(Duration.ofMillis(Constants.JWT.REFRESH_TOKEN.DURATION))
-                .path(Utils.getEndpointWithPrefix(Constants.CONTROLLERS.AUTH.COOKIE_PATH))
+                .path(Utils.getEndpointWithPrefix(Constants.RESPONSE_COOKIE.PATH))
                 .sameSite(SameSiteCookies.STRICT.getValue())
                 .secure(true)
                 .httpOnly(true)
@@ -63,36 +65,35 @@ public class AuthServiceImpl implements AuthService {
         if (!isAuthenticated)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.BAD_CREDENTIALS);
 
-        RefreshToken refreshToken = refreshTokenService.findByUser(user);
-
-        if (refreshToken == null)
-            refreshToken = RefreshToken
-                    .builder()
-                    .value(UUID.randomUUID())
-                    .expiredAt(new Date(System.currentTimeMillis() + Constants.JWT.REFRESH_TOKEN.DURATION))
-                    .user(user)
-                    .build();
-        else {
-            refreshToken.setValue(UUID.randomUUID());
-            refreshToken.setExpiredAt(new Date(System.currentTimeMillis() + Constants.JWT.REFRESH_TOKEN.DURATION));
-        }
-
-        refreshToken = refreshTokenService.create(refreshToken);
-
-        return createAuthResponse(refreshToken.getValue().toString(), jwtService.generateToken(user));
+        return createAuthResponse(jwtService.generateToken(user, Type.REFRESH),
+                jwtService.generateToken(user, Type.ACCESS));
     }
 
     @Override
-    public AuthResponse refresh(UUID value) {
-        RefreshToken refreshToken = refreshTokenService.findByValue(value);
+    public AuthResponse refresh(String refreshToken) {
+        JWTClaimsSet claimsSet = jwtService.getClaimsSet(refreshToken);
 
-        refreshToken.setValue(UUID.randomUUID());
-        refreshToken.setExpiredAt(new Date(System.currentTimeMillis() + Constants.JWT.REFRESH_TOKEN.DURATION));
+        User user = userService.findByUsername(claimsSet.getSubject());
 
-        refreshToken = refreshTokenService.create(refreshToken);
+        InvalidToken invalidToken = invalidTokenService.findById(UUID.fromString(claimsSet.getJWTID()));
 
-        return createAuthResponse(refreshToken.getValue().toString(),
-                jwtService.generateToken(refreshToken.getUser()));
+        if (invalidToken != null)
+            if (invalidToken.getRevokedAt().before(new Date()))
+                throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED);
+
+        invalidToken = InvalidToken
+                .builder()
+                .id(UUID.fromString(claimsSet.getJWTID()))
+                .expiredAt(claimsSet.getExpirationTime())
+                .revokedAt(new Date())
+                .type(Type.REFRESH)
+                .user(user)
+                .build();
+
+        invalidToken = invalidTokenService.create(invalidToken);
+
+        return createAuthResponse(jwtService.generateToken(user, Type.REFRESH),
+                jwtService.generateToken(user, Type.ACCESS));
     }
 
     @Override
