@@ -35,7 +35,7 @@ public class SecurityConfig {
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private static final String[] PUBLIC_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
-                    "/auth/login", "/auth/register", "/auth/refresh"
+                    "/auth/login", "/auth/register", "/auth/refresh", "/auth/logout"
             );
     private static final String[] PROTECTED_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
@@ -58,9 +58,9 @@ public class SecurityConfig {
                 .sessionManagement(config -> config
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(PUBLIC_ENDPOINTS)
-                        .permitAll()
                         .requestMatchers(SWAGGER_ENDPOINTS)
+                        .permitAll()
+                        .requestMatchers(PUBLIC_ENDPOINTS)
                         .permitAll()
                         .requestMatchers(PROTECTED_ENDPOINTS)
                         .authenticated()
