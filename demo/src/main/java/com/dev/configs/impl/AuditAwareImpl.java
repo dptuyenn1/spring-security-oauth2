@@ -4,9 +4,9 @@ import com.dev.helpers.Constants;
 import io.micrometer.common.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.Optional;
 
@@ -18,12 +18,12 @@ public class AuditAwareImpl implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication instanceof AnonymousAuthenticationToken)
-            return Optional.of(Constants.AUDIT_AWARE.SYSTEM);
+        if (authentication instanceof JwtAuthenticationToken)
+            return Optional
+                    .of(authentication)
+                    .filter(Authentication::isAuthenticated)
+                    .map(Authentication::getName);
 
-        return Optional
-                .ofNullable(authentication)
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getName);
+        return Optional.of(Constants.AUDIT_AWARE.SYSTEM);
     }
 }
