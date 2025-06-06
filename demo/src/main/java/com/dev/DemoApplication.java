@@ -22,7 +22,7 @@ public class DemoApplication {
             Role roleUser = Role.builder().authority(Authority.USER).build();
             Role roleAdmin = Role.builder().authority(Authority.ADMIN).build();
 
-            User admin = User.builder().username("admin").password("123").build();
+            User admin = User.builder().firstName("Tuyen").lastName("Dang").username("admin").password("123").build();
 
             admin.getRoles().add(roleUser);
             admin.getRoles().add(roleAdmin);
