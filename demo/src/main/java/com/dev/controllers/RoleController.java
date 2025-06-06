@@ -24,6 +24,6 @@ public class RoleController {
     @PostMapping
     public SuccessResponse<RoleResponse> create(@RequestBody RoleRequest request) {
         return new SuccessResponse<>(MessageFormat.format(Constants.API_RESPONSE_MESSAGES.SUCCESS,
-                "Login"), roleService.create(request), HttpStatus.CREATED);
+                "Create role"), roleService.create(request), HttpStatus.CREATED);
     }
 }
