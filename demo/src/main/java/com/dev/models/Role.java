@@ -19,10 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 public class Role extends BaseModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    
     @Enumerated(EnumType.STRING)
     private Authority authority;
     @ManyToMany(mappedBy = "roles")

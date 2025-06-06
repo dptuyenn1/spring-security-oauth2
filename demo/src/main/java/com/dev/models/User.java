@@ -7,12 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = Constants.TABLE_NAMES.USER)
@@ -22,10 +19,6 @@ import java.util.UUID;
 @SuperBuilder
 public class User extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
     private String firstName;
     private String lastName;
     private String username;
@@ -40,5 +33,5 @@ public class User extends BaseModel {
     private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user")
     @Builder.Default
-    private Set<InvalidToken> invalidTokens = new HashSet<>();
+    private Set<Token> tokens = new HashSet<>();
 }
