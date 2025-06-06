@@ -8,11 +8,11 @@ import com.dev.enums.Type;
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
 import com.dev.mappers.UserMapper;
-import com.dev.models.InvalidToken;
+import com.dev.models.Token;
 import com.dev.models.User;
 import com.dev.services.AuthService;
-import com.dev.services.InvalidTokenService;
 import com.dev.services.JwtService;
+import com.dev.services.TokenService;
 import com.dev.services.UserService;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final InvalidTokenService invalidTokenService;
+    private final TokenService tokenService;
 
     private AuthResponse createAuthResponse(String refreshToken, String accessToken) {
         HttpCookie cookie = ResponseCookie
@@ -56,6 +56,32 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
+    private void saveTokens(String accessToken, String refreshToken, User user) {
+        String accessTokenId = jwtService.getClaimsSet(accessToken).getJWTID();
+        String refreshTokenId = jwtService.getClaimsSet(refreshToken).getJWTID();
+
+        Date accessTokenExpiredAt = jwtService.getClaimsSet(accessToken).getExpirationTime();
+        Date refreshTokenExpiredAt = jwtService.getClaimsSet(refreshToken).getExpirationTime();
+
+        Token token = Token
+                .builder()
+                .id(UUID.fromString(accessTokenId))
+                .expiredAt(accessTokenExpiredAt)
+                .type(Type.ACCESS)
+                .user(user)
+                .build();
+        token = tokenService.create(token);
+
+        token = Token
+                .builder()
+                .id(UUID.fromString(refreshTokenId))
+                .expiredAt(refreshTokenExpiredAt)
+                .type(Type.REFRESH)
+                .user(user)
+                .build();
+        token = tokenService.create(token);
+    }
+
     @Override
     public AuthResponse login(LoginRequest request) {
         User user = userService.findByUsername(request.getUsername());
@@ -65,8 +91,12 @@ public class AuthServiceImpl implements AuthService {
         if (!isAuthenticated)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.BAD_CREDENTIALS);
 
-        return createAuthResponse(jwtService.generateToken(user, Type.REFRESH),
-                jwtService.generateToken(user, Type.ACCESS));
+        String accessToken = jwtService.generateToken(user, Type.ACCESS);
+        String refreshToken = jwtService.generateToken(user, Type.REFRESH);
+
+        saveTokens(accessToken, refreshToken, user);
+
+        return createAuthResponse(refreshToken, accessToken);
     }
 
     @Override
@@ -75,25 +105,21 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userService.findByUsername(claimsSet.getSubject());
 
-        InvalidToken invalidToken = invalidTokenService.findById(UUID.fromString(claimsSet.getJWTID()));
+        Token token = tokenService.getById(UUID.fromString(claimsSet.getJWTID()));
 
-        if (invalidToken != null)
-            if (invalidToken.getRevokedAt().before(new Date()))
-                throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED);
+        if (token.getRevokedAt() == null) {
+            token.setRevokedAt(new Date());
 
-        invalidToken = InvalidToken
-                .builder()
-                .id(UUID.fromString(claimsSet.getJWTID()))
-                .expiredAt(claimsSet.getExpirationTime())
-                .revokedAt(new Date())
-                .type(Type.REFRESH)
-                .user(user)
-                .build();
+            token = tokenService.create(token);
+        } else
+            throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED);
 
-        invalidToken = invalidTokenService.create(invalidToken);
+        String accessToken = jwtService.generateToken(user, Type.ACCESS);
+        refreshToken = jwtService.generateToken(user, Type.REFRESH);
 
-        return createAuthResponse(jwtService.generateToken(user, Type.REFRESH),
-                jwtService.generateToken(user, Type.ACCESS));
+        saveTokens(accessToken, refreshToken, user);
+
+        return createAuthResponse(refreshToken, accessToken);
     }
 
     @Override

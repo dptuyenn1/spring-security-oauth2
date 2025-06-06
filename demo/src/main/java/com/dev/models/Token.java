@@ -14,12 +14,12 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = Constants.TABLE_NAMES.INVALID_TOKEN)
+@Table(name = Constants.TABLE_NAMES.TOKEN)
 @Getter
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class InvalidToken extends BaseModel {
+public class Token extends AuditModel {
 
     @Id
     @JdbcTypeCode(SqlTypes.VARCHAR)
