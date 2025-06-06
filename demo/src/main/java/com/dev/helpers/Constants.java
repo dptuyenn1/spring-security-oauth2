@@ -2,11 +2,16 @@ package com.dev.helpers;
 
 public class Constants {
 
+    public static class OTHERS {
+
+        public static final String SYSTEM = "SYSTEM";
+    }
+
     public static class TABLE_NAMES {
 
         public static final String USER = "users";
         public static final String ROLE = "roles";
-        public static final String INVALID_TOKEN = "invalid_tokens";
+        public static final String TOKEN = "tokens";
     }
 
     public static class USERS_ROLES {
@@ -18,6 +23,9 @@ public class Constants {
     public static class JWT {
 
         public static final String ISSUER = OTHERS.SYSTEM;
+        public static final String ROLES_CLAIM = "roles";
+        public static final String ROLE_PREFIX = "ROLE_";
+        
         public static final int DEFAULT_DURATION = 5 * 60 * 1000;
 
         private static final int MILLISECONDS_OF_SECOND = 1000;
@@ -84,9 +92,9 @@ public class Constants {
         public static final String API_BASE_PACKAGE = String.format(API_BASE_PACKAGE_FORMAT, ROOT, PACKAGE);
     }
 
-    public static class OTHERS {
+    public static class AUDIT_AWARE {
 
-        public static final String SYSTEM = "SYSTEM";
+        public static final String SYSTEM = OTHERS.SYSTEM;
     }
 
     public static class RESPONSE_COOKIE {

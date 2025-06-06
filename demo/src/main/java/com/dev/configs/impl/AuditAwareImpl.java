@@ -1,12 +1,11 @@
 package com.dev.configs.impl;
 
 import com.dev.helpers.Constants;
-import com.dev.repositories.UserRepository;
 import io.micrometer.common.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
@@ -15,18 +14,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuditAwareImpl implements AuditorAware<String> {
 
-    private final UserRepository userRepository;
-
     @Override
     public Optional<String> getCurrentAuditor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication instanceof AnonymousAuthenticationToken)
+            return Optional.of(Constants.AUDIT_AWARE.SYSTEM);
+
         return Optional
-                .ofNullable(SecurityContextHolder.getContext())
-                .map(SecurityContext::getAuthentication)
+                .ofNullable(authentication)
                 .filter(Authentication::isAuthenticated)
-                .map(Authentication::getName)
-                .flatMap(username -> userRepository
-                        .findByUsername(username)
-                        .map(user -> String.format("%s %s", user.getLastName(), user.getFirstName())))
-                .or(() -> Optional.of(Constants.OTHERS.SYSTEM));
+                .map(Authentication::getName);
     }
 }

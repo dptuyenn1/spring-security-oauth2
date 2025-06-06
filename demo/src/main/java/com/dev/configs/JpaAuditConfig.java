@@ -1,7 +1,6 @@
 package com.dev.configs;
 
 import com.dev.configs.impl.AuditAwareImpl;
-import com.dev.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -12,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class JpaAuditConfig {
 
     @Bean
-    public AuditorAware<String> auditorProvider(UserRepository userRepository) {
-        return new AuditAwareImpl(userRepository);
+    public AuditorAware<String> auditorProvider() {
+        return new AuditAwareImpl();
     }
 }
