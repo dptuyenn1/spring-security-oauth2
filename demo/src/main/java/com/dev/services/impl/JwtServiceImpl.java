@@ -21,7 +21,6 @@ import java.util.UUID;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private static final String ROLES_CLAIM = "roles";
     private static final String TYPE_CLAIM = "type";
 
     @Value("${app.jwt.key}")
@@ -32,7 +31,7 @@ public class JwtServiceImpl implements JwtService {
         List<String> roles = user
                 .getRoles()
                 .stream()
-                .map(role -> role.getAuthority().name())
+                .map(role -> Constants.JWT.ROLE_PREFIX + role.getAuthority().name())
                 .toList();
 
         JWSHeader header = new JWSHeader
@@ -54,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
                 .issuer(Constants.JWT.ISSUER)
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)
-                .claim(ROLES_CLAIM, roles)
+                .claim(Constants.JWT.ROLES_CLAIM, roles)
                 .claim(TYPE_CLAIM, type.name())
                 .jwtID(UUID.randomUUID().toString())
                 .build();

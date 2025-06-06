@@ -1,6 +1,7 @@
 package com.dev.configs;
 
 import com.dev.enums.Authority;
+import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,8 +31,6 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private static final String CLAIM_NAME = "roles";
 
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private static final String[] PUBLIC_ENDPOINTS =
@@ -66,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(PROTECTED_ENDPOINTS)
                         .authenticated()
                         .anyRequest()
-                        .hasAnyAuthority(Authority.ADMIN.name()))
+                        .hasAnyRole(Authority.ADMIN.name()))
                 .oauth2ResourceServer(config -> config
                         .jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(authenticationEntryPoint)
@@ -111,7 +110,7 @@ public class SecurityConfig {
         call setAuthorityPrefix to avoid automatically defined prefix: SCOPE_ROLE_<ROLE_NAME>
          */
 
-        grantedAuthoritiesConverter.setAuthoritiesClaimName(CLAIM_NAME);
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(Constants.JWT.ROLES_CLAIM);
         grantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
