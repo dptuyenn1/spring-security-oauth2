@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse<?> handleException(Exception exception, HttpServletRequest request) {
+    public ErrorResponse<?> handleException(final Exception exception, HttpServletRequest request) {
         if (exception instanceof MethodArgumentNotValidException ex) {
             Map<String, String> errors = new HashMap<>();
 
@@ -50,9 +51,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(value = AuthenticationException.class)
+    @ExceptionHandler(value = {AuthenticationException.class, JwtException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse<String> handleException(final AuthenticationException exception, HttpServletRequest request) {
+    public ErrorResponse<String> handleUnauthorizedException(final Exception exception, HttpServletRequest request) {
         return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 }

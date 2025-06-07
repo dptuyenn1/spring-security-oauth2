@@ -31,7 +31,4 @@ public class User extends BaseModel {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private Set<Token> tokens = new HashSet<>();
 }

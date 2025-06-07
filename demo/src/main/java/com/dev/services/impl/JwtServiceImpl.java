@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -55,7 +54,6 @@ public class JwtServiceImpl implements JwtService {
                 .expirationTime(expiredAt)
                 .claim(Constants.JWT.ROLES_CLAIM, roles)
                 .claim(TYPE_CLAIM, type.name())
-                .jwtID(UUID.randomUUID().toString())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
@@ -78,6 +76,11 @@ public class JwtServiceImpl implements JwtService {
             JWSVerifier verifier = new MACVerifier(key);
 
             if (!signedJWT.verify(verifier))
+                throw new JwtException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
+
+            Date expiredAt = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            if (expiredAt.before(new Date()))
                 throw new JwtException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
             return signedJWT.getJWTClaimsSet();

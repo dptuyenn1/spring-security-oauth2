@@ -12,6 +12,7 @@ public class Constants {
         public static final String USER = "users";
         public static final String ROLE = "roles";
         public static final String TOKEN = "tokens";
+        public static final String INVALID_TOKEN = "invalid_tokens";
     }
 
     public static class USERS_ROLES {
@@ -25,7 +26,7 @@ public class Constants {
         public static final String ISSUER = OTHERS.SYSTEM;
         public static final String ROLES_CLAIM = "roles";
         public static final String ROLE_PREFIX = "ROLE_";
-        
+
         public static final int DEFAULT_DURATION = 5 * 60 * 1000;
 
         private static final int MILLISECONDS_OF_SECOND = 1000;
@@ -60,7 +61,7 @@ public class Constants {
         public static final String AUTHENTICATION_FAILED = "Authentication failed! Something went wrong...";
         public static final String INVALID_TOKEN = "Invalid token (expired or incorrect signature)!";
         public static final String TOKEN_REQUIRED = "This resource requires authentication token!";
-        public static final String TOKEN_REVOKED = "Token was revoked!";
+        public static final String TOKEN_REVOKED = "Token was revoked, please login again to get the new one!";
     }
 
     public static class API_RESPONSE_MESSAGES {

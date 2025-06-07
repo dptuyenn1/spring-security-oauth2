@@ -14,20 +14,21 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = Constants.TABLE_NAMES.TOKEN)
+@Table(name = Constants.TABLE_NAMES.INVALID_TOKEN)
 @Getter
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class Token extends AuditModel {
+public class InvalidToken extends AuditModel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
-    private Date expiredAt;
+    @Lob
+    private String token;
     private Date revokedAt;
+    private Date expiredAt;
     @Enumerated(EnumType.STRING)
     private Type type;
-    @ManyToOne
-    private User user;
 }
