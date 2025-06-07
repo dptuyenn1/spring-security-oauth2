@@ -84,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        User user = userService.findByUsername(request.getUsername());
+        User user = userService.getByUsername(request.getUsername());
 
         boolean isAuthenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
@@ -103,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse refresh(String refreshToken) {
         JWTClaimsSet claimsSet = jwtService.getClaimsSet(refreshToken);
 
-        User user = userService.findByUsername(claimsSet.getSubject());
+        User user = userService.getByUsername(claimsSet.getSubject());
 
         Token token = tokenService.getById(UUID.fromString(claimsSet.getJWTID()));
 
@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse me(String username) {
-        return userMapper.toUserResponse(userService.findByUsername(username));
+        return userMapper.toUserResponse(userService.getByUsername(username));
     }
 
     @Override

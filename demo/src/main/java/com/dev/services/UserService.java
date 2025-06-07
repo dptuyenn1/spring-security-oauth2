@@ -10,4 +10,6 @@ public interface UserService {
     User create(RegisterRequest request);
 
     User findByUsername(String username);
+
+    User getByUsername(String username);
 }

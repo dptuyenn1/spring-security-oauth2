@@ -1,12 +1,15 @@
 package com.dev.configs.impl;
 
 import com.dev.helpers.Constants;
+import com.dev.services.UserService;
 import io.micrometer.common.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,16 +17,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuditAwareImpl implements AuditorAware<String> {
 
+    private final UserService userService;
+
     @Override
+    /*
+    this below annotation help to use jpa (which not be allowed) in audit,
+    without this, the audit will cause recursive call => stackoverflow when cannot find any user
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> getCurrentAuditor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication instanceof JwtAuthenticationToken)
-            return Optional
-                    .of(authentication)
-                    .filter(Authentication::isAuthenticated)
-                    .map(Authentication::getName);
-
-        return Optional.of(Constants.AUDIT_AWARE.SYSTEM);
+        return Optional
+                .ofNullable(SecurityContextHolder.getContext())
+                .map(SecurityContext::getAuthentication)
+                .filter(Authentication::isAuthenticated)
+                .map(Authentication::getName)
+                .flatMap(username -> Optional
+                        .ofNullable(userService.findByUsername(username))
+                        .map(user -> String.format("%s %s", user.getLastName(), user.getFirstName())))
+                .or(() -> Optional.of(Constants.OTHERS.SYSTEM));
     }
 }
