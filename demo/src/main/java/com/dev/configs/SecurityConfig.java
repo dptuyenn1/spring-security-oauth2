@@ -1,6 +1,7 @@
 package com.dev.configs;
 
 import com.dev.enums.Authority;
+import com.dev.enums.Type;
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -35,11 +40,11 @@ public class SecurityConfig {
     private static final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private static final String[] PUBLIC_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
-                    "/auth/login", "/auth/register", "/auth/refresh", "/auth/logout"
+                    "/auth/login", "/auth/register", "/auth/refresh"
             );
     private static final String[] PROTECTED_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
-                    "/auth/me"
+                    "/auth/me", "/auth/logout"
             );
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -94,10 +99,19 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder() {
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), MacAlgorithm.HS512.getName());
 
-        return NimbusJwtDecoder
+        OAuth2TokenValidator<Jwt> tokenValidator = new DelegatingOAuth2TokenValidator<>(
+                new JwtClaimValidator<>(Constants.JWT.TYPE_CLAIM,
+                        claim -> claim.toString().equals(Type.ACCESS.name()))
+        );
+
+        NimbusJwtDecoder decoder = NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
+
+        decoder.setJwtValidator(tokenValidator);
+
+        return decoder;
     }
 
     @Bean
