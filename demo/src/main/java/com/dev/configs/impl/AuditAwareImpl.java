@@ -34,6 +34,6 @@ public class AuditAwareImpl implements AuditorAware<String> {
                 .flatMap(username -> Optional
                         .ofNullable(userService.findByUsername(username))
                         .map(user -> String.format("%s %s", user.getLastName(), user.getFirstName())))
-                .or(() -> Optional.of(Constants.OTHERS.SYSTEM));
+                .or(() -> Optional.of(Constants.AUDIT_AWARE.SYSTEM));
     }
 }
