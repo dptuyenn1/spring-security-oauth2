@@ -1,5 +1,7 @@
 package com.dev.controllers;
 
+import com.dev.dto.response.SuccessResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MockController {
 
     @GetMapping("/hello")
-    public String hello() {
-        return "Hello from protected endpoint!";
+    public SuccessResponse<String> hello() {
+        return new SuccessResponse<>("Hello from protected endpoint!", HttpStatus.OK);
     }
 }
