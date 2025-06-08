@@ -9,4 +9,6 @@ public interface InvalidTokenService {
     InvalidToken create(InvalidToken token);
 
     boolean existById(UUID id);
+
+    InvalidToken getById(UUID id);
 }

@@ -5,6 +5,7 @@ public class Constants {
     public static class OTHERS {
 
         public static final String SYSTEM = "SYSTEM";
+        public static final String DATETIME_FORMAT_PATTERN = "dd-MM-yyyy HH:mm:ss";
     }
 
     public static class TABLE_NAMES {
@@ -62,7 +63,7 @@ public class Constants {
         public static final String AUTHENTICATION_FAILED = "Authentication failed! Something went wrong...";
         public static final String INVALID_TOKEN = "Invalid token (expired, incorrect signature or type)!";
         public static final String TOKEN_REQUIRED = "This resource requires authentication token!";
-        public static final String TOKEN_REVOKED = "Token was revoked, please login again to get the new one!";
+        public static final String TOKEN_REVOKED = "Token was revoked at {0}, please login again to get the new one!";
     }
 
     public static class API_RESPONSE_MESSAGES {

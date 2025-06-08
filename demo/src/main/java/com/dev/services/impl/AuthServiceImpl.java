@@ -23,6 +23,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
@@ -82,8 +83,13 @@ public class AuthServiceImpl implements AuthService {
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
-        if (invalidTokenService.existById(id))
-            throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED);
+        if (invalidTokenService.existById(id)) {
+            InvalidToken invalidToken = invalidTokenService.getById(id);
+
+            throw new BadCredentialsException(
+                    MessageFormat.format(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED,
+                            Utils.dateToString(invalidToken.getRevokedAt())));
+        }
 
         InvalidToken invalidToken = InvalidToken
                 .builder()

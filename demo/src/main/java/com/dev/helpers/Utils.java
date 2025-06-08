@@ -7,7 +7,9 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
@@ -55,5 +57,11 @@ public class Utils {
 
     public static String getEndpointWithPrefix(String endpoint) {
         return getEndpointsWithPrefix(endpoint)[0];
+    }
+
+    public static String dateToString(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.OTHERS.DATETIME_FORMAT_PATTERN);
+
+        return simpleDateFormat.format(date);
     }
 }
