@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private static final String TYPE_CLAIM = "type";
     private final JwtService jwtService;
     private final UserService userService;
     private final UserMapper userMapper;
@@ -75,20 +75,25 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userService.getByUsername(claimsSet.getSubject());
 
-        InvalidToken invalidToken = invalidTokenService.findByToken(refreshToken);
+        UUID id = UUID.fromString(claimsSet.getJWTID());
 
-        if (invalidToken == null) {
-            invalidToken = InvalidToken
-                    .builder()
-                    .token(refreshToken)
-                    .revokedAt(new Date())
-                    .expiredAt(claimsSet.getExpirationTime())
-                    .type(Type.valueOf(claimsSet.getClaim(TYPE_CLAIM).toString()))
-                    .build();
+        Type type = Type.valueOf(claimsSet.getClaim(Constants.JWT.TYPE_CLAIM).toString());
 
-            invalidTokenService.create(invalidToken);
-        } else
+        if (type != Type.REFRESH)
+            throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
+
+        if (invalidTokenService.existById(id))
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED);
+
+        InvalidToken invalidToken = InvalidToken
+                .builder()
+                .id(id)
+                .revokedAt(new Date())
+                .expiredAt(claimsSet.getExpirationTime())
+                .type(type)
+                .build();
+
+        invalidTokenService.create(invalidToken);
 
         return createAuthResponse(jwtService.generateToken(user, Type.ACCESS),
                 jwtService.generateToken(user, Type.REFRESH));

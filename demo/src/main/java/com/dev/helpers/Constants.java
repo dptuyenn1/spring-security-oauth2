@@ -26,6 +26,7 @@ public class Constants {
         public static final String ISSUER = OTHERS.SYSTEM;
         public static final String ROLES_CLAIM = "roles";
         public static final String ROLE_PREFIX = "ROLE_";
+        public static final String TYPE_CLAIM = "type";
 
         public static final int DEFAULT_DURATION = 5 * 60 * 1000;
 
@@ -59,7 +60,7 @@ public class Constants {
         public static final String BAD_CREDENTIALS = "Authentication failed! Invalid username or password...";
         public static final String ACCESS_DENIED = "You don't have permission to access or use this resource!";
         public static final String AUTHENTICATION_FAILED = "Authentication failed! Something went wrong...";
-        public static final String INVALID_TOKEN = "Invalid token (expired or incorrect signature)!";
+        public static final String INVALID_TOKEN = "Invalid token (expired, incorrect signature or type)!";
         public static final String TOKEN_REQUIRED = "This resource requires authentication token!";
         public static final String TOKEN_REVOKED = "Token was revoked, please login again to get the new one!";
     }

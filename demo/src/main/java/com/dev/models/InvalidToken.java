@@ -22,11 +22,8 @@ import java.util.UUID;
 public class InvalidToken extends AuditModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
-    @Lob
-    private String token;
     private Date revokedAt;
     private Date expiredAt;
     @Enumerated(EnumType.STRING)

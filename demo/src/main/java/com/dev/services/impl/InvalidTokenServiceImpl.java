@@ -6,6 +6,8 @@ import com.dev.services.InvalidTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class InvalidTokenServiceImpl implements InvalidTokenService {
@@ -18,7 +20,7 @@ public class InvalidTokenServiceImpl implements InvalidTokenService {
     }
 
     @Override
-    public InvalidToken findByToken(String token) {
-        return invalidTokenRepository.findByToken(token).orElse(null);
+    public boolean existById(UUID id) {
+        return invalidTokenRepository.existsById(id);
     }
 }

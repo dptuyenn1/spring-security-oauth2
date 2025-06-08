@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -48,12 +49,13 @@ public class JwtServiceImpl implements JwtService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet
                 .Builder()
+                .jwtID(UUID.randomUUID().toString())
                 .subject(user.getUsername())
                 .issuer(Constants.JWT.ISSUER)
                 .issueTime(issuedAt)
                 .expirationTime(expiredAt)
                 .claim(Constants.JWT.ROLES_CLAIM, roles)
-                .claim(TYPE_CLAIM, type.name())
+                .claim(Constants.JWT.TYPE_CLAIM, type.name())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
