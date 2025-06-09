@@ -45,7 +45,7 @@ public class Constants {
 
         public static class REFRESH_TOKEN {
 
-            private static final int DAYS_OF_WEEK = 7;
+            private static final int DAYS_OF_WEEK = 1;
             private static final int HOURS_OF_DAY = 24;
             private static final int MINUTES_OF_HOUR = 60;
             private static final int SECONDS_OF_MINUTE = 60;

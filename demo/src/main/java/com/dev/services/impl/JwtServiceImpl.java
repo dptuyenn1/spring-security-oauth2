@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,13 +22,10 @@ import java.util.UUID;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private static final String TYPE_CLAIM = "type";
-
     @Value("${app.jwt.key}")
     private String key;
 
-    @Override
-    public String generateToken(User user, Type type) {
+    private SignedJWT createSignedJWT(User user, Type type, Date expiredAt) {
         List<String> roles = user
                 .getRoles()
                 .stream()
@@ -39,29 +37,51 @@ public class JwtServiceImpl implements JwtService {
                 .type(JOSEObjectType.JWT)
                 .build();
 
-        Date issuedAt = new Date();
-        Date expiredAt = new Date(issuedAt.getTime() + Constants.JWT.DEFAULT_DURATION);
-
-        switch (type) {
-            case ACCESS -> expiredAt = new Date(issuedAt.getTime() + Constants.JWT.ACCESS_TOKEN.DURATION);
-            case REFRESH -> expiredAt = new Date(issuedAt.getTime() + Constants.JWT.REFRESH_TOKEN.DURATION);
-        }
-
         JWTClaimsSet claimsSet = new JWTClaimsSet
                 .Builder()
                 .jwtID(UUID.randomUUID().toString())
                 .subject(user.getUsername())
                 .issuer(Constants.JWT.ISSUER)
-                .issueTime(issuedAt)
+                .issueTime(new Date())
                 .expirationTime(expiredAt)
                 .claim(Constants.JWT.ROLES_CLAIM, roles)
                 .claim(Constants.JWT.TYPE_CLAIM, type.name())
                 .build();
 
-        SignedJWT signedJWT = new SignedJWT(header, claimsSet);
+        return new SignedJWT(header, claimsSet);
+    }
+
+    @Override
+    public String generateToken(User user, Type type) {
+        Instant issuedAt = Instant.now();
+
+        Date expiredAt = new Date(issuedAt.plusMillis(Constants.JWT.REFRESH_TOKEN.DURATION).toEpochMilli());
+
+        switch (type) {
+            case ACCESS -> expiredAt =
+                    new Date(issuedAt.plusMillis(Constants.JWT.ACCESS_TOKEN.DURATION).toEpochMilli());
+            case REFRESH -> expiredAt =
+                    new Date(issuedAt.plusMillis(Constants.JWT.REFRESH_TOKEN.DURATION).toEpochMilli());
+        }
+
+        SignedJWT signedJWT = createSignedJWT(user, type, expiredAt);
 
         try {
-            JWSSigner signer = new MACSigner(key);
+            JWSSigner signer = new MACSigner(key.getBytes());
+            signedJWT.sign(signer);
+        } catch (JOSEException exception) {
+            throw new JwtException(exception.getMessage());
+        }
+
+        return signedJWT.serialize();
+    }
+
+    @Override
+    public String generateToken(User user, Date expiredAt) {
+        SignedJWT signedJWT = createSignedJWT(user, Type.REFRESH, expiredAt);
+
+        try {
+            JWSSigner signer = new MACSigner(key.getBytes());
             signedJWT.sign(signer);
         } catch (JOSEException exception) {
             throw new JwtException(exception.getMessage());
@@ -75,7 +95,7 @@ public class JwtServiceImpl implements JwtService {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
 
-            JWSVerifier verifier = new MACVerifier(key);
+            JWSVerifier verifier = new MACVerifier(key.getBytes());
 
             if (!signedJWT.verify(verifier))
                 throw new JwtException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);

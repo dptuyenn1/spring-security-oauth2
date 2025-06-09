@@ -80,6 +80,8 @@ public class AuthServiceImpl implements AuthService {
 
         Type type = Type.valueOf(claimsSet.getClaim(Constants.JWT.TYPE_CLAIM).toString());
 
+        Date expiredAt = claimsSet.getExpirationTime();
+
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
@@ -95,14 +97,14 @@ public class AuthServiceImpl implements AuthService {
                 .builder()
                 .id(id)
                 .revokedAt(new Date())
-                .expiredAt(claimsSet.getExpirationTime())
+                .expiredAt(expiredAt)
                 .type(type)
                 .build();
 
         invalidTokenService.create(invalidToken);
 
         return createAuthResponse(jwtService.generateToken(user, Type.ACCESS),
-                jwtService.generateToken(user, Type.REFRESH));
+                jwtService.generateToken(user, expiredAt));
     }
 
     @Override
