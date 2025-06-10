@@ -8,11 +8,10 @@ import com.dev.enums.Type;
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;
 import com.dev.mappers.UserMapper;
-import com.dev.models.InvalidToken;
 import com.dev.models.User;
 import com.dev.services.AuthService;
-import com.dev.services.InvalidTokenService;
 import com.dev.services.JwtService;
+import com.dev.services.RedisService;
 import com.dev.services.UserService;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final InvalidTokenService invalidTokenService;
+    private final RedisService<String> redisService;
 
     private AuthResponse createAuthResponse(String accessToken, String refreshToken) {
         HttpCookie cookie = ResponseCookie
@@ -85,23 +84,13 @@ public class AuthServiceImpl implements AuthService {
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
-        if (invalidTokenService.existById(id)) {
-            InvalidToken invalidToken = invalidTokenService.getById(id);
+        String revokedAt = redisService.get(id.toString());
 
-            throw new BadCredentialsException(
-                    MessageFormat.format(Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED,
-                            Utils.dateToString(invalidToken.getRevokedAt())));
-        }
-
-        InvalidToken invalidToken = InvalidToken
-                .builder()
-                .id(id)
-                .revokedAt(new Date())
-                .expiredAt(expiredAt)
-                .type(type)
-                .build();
-
-        invalidTokenService.create(invalidToken);
+        if (revokedAt == null)
+            redisService.set(id.toString(), Utils.dateToString(new Date()), Duration.ofMillis(expiredAt.getTime()));
+        else
+            throw new BadCredentialsException(MessageFormat.format(
+                    Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, revokedAt));
 
         return createAuthResponse(jwtService.generateToken(user, Type.ACCESS),
                 jwtService.generateToken(user, expiredAt));
