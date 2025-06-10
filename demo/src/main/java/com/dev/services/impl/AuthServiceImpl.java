@@ -31,6 +31,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    private static final String KEY = "refreshTokens";
+
     private final JwtService jwtService;
     private final UserService userService;
     private final UserMapper userMapper;
@@ -84,10 +86,11 @@ public class AuthServiceImpl implements AuthService {
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
-        String revokedAt = redisService.get(id.toString());
+        String revokedAt = redisService.get(KEY, id.toString());
 
         if (revokedAt == null)
-            redisService.set(id.toString(), Utils.dateToString(new Date()), Duration.ofMillis(expiredAt.getTime()));
+            redisService.put(KEY, id.toString(), Utils.dateToString(new Date()),
+                    Duration.ofMillis(expiredAt.getTime()));
         else
             throw new BadCredentialsException(MessageFormat.format(
                     Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, revokedAt));

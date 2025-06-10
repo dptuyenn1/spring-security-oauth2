@@ -1,30 +1,53 @@
 package com.dev.services.impl;
 
 import com.dev.services.RedisService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class RedisServiceImpl<T> implements RedisService<T> {
+public class RedisServiceImpl<V> implements RedisService<V> {
 
-    private final RedisTemplate<String, T> redisTemplate;
+    private final ValueOperations<String, V> valueOperations;
+    private final HashOperations<String, String, V> hashOperations;
 
-    @Override
-    public void set(String key, T value) {
-        redisTemplate.opsForValue().set(key, value);
+    public RedisServiceImpl(RedisTemplate<String, V> redisTemplate) {
+        this.valueOperations = redisTemplate.opsForValue();
+        this.hashOperations = redisTemplate.opsForHash();
     }
 
     @Override
-    public void set(String key, T value, Duration duration) {
-        redisTemplate.opsForValue().set(key, value, duration);
+    public void set(String key, V value) {
+        valueOperations.set(key, value);
     }
 
     @Override
-    public T get(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public void set(String key, V value, Duration duration) {
+        valueOperations.set(key, value, duration);
+    }
+
+    @Override
+    public void put(String key, String hashKey, V hashValue) {
+        hashOperations.put(key, hashKey, hashValue);
+    }
+
+    @Override
+    public void put(String key, String hashKey, V hashValue, Duration duration) {
+        put(key, hashKey, hashValue);
+        hashOperations.expire(key, duration, List.of(hashKey));
+    }
+
+    @Override
+    public V get(String key) {
+        return valueOperations.get(key);
+    }
+
+    @Override
+    public V get(String key, String hashKey) {
+        return hashOperations.get(key, hashKey);
     }
 }
