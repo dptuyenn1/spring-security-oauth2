@@ -1,16 +1,14 @@
 package com.dev.services;
 
-import java.time.Duration;
-
 public interface RedisService<V> {
 
     void set(String key, V value);
 
-    void set(String key, V value, Duration duration);
+    void set(String key, V value, long expiredAt);
 
     void put(String key, String hashKey, V hashValue);
 
-    void put(String key, String hashKey, V hashValue, Duration duration);
+    void put(String key, String hashKey, V hashValue, long expiredAt);
 
     V get(String key);
 

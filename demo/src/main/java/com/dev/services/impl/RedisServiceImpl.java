@@ -26,8 +26,8 @@ public class RedisServiceImpl<V> implements RedisService<V> {
     }
 
     @Override
-    public void set(String key, V value, Duration duration) {
-        valueOperations.set(key, value, duration);
+    public void set(String key, V value, long expiredAt) {
+        valueOperations.set(key, value, Duration.ofMillis(expiredAt));
     }
 
     @Override
@@ -36,9 +36,10 @@ public class RedisServiceImpl<V> implements RedisService<V> {
     }
 
     @Override
-    public void put(String key, String hashKey, V hashValue, Duration duration) {
+    public void put(String key, String hashKey, V hashValue, long expiredAt) {
         put(key, hashKey, hashValue);
-        hashOperations.expire(key, duration, List.of(hashKey));
+        
+        hashOperations.expire(key, Duration.ofMillis(expiredAt), List.of(hashKey));
     }
 
     @Override
