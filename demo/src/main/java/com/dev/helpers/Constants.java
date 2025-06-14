@@ -12,7 +12,6 @@ public class Constants {
 
         public static final String USER = "users";
         public static final String ROLE = "roles";
-        public static final String TOKEN = "tokens";
         public static final String INVALID_TOKEN = "invalid_tokens";
     }
 

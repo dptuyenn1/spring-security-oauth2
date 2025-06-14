@@ -44,7 +44,7 @@ public class SecurityConfig {
             );
     private static final String[] PROTECTED_ENDPOINTS =
             Utils.getEndpointsWithPrefix(
-                    "/auth/me", "/auth/logout"
+                    "/auth/me"
             );
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
