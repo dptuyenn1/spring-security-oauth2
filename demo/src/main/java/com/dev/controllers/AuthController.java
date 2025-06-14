@@ -7,6 +7,7 @@ import com.dev.dto.response.SuccessResponse;
 import com.dev.dto.response.UserResponse;
 import com.dev.helpers.Constants;
 import com.dev.services.AuthService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class AuthController {
     @PostMapping("/refresh")
     @SecurityRequirements
     public SuccessResponse<AuthResponse> refresh(
+            @Parameter(hidden = true)
             @CookieValue(value = Constants.RESPONSE_COOKIE.NAME) String refreshToken) {
         AuthResponse response = authService.refresh(refreshToken);
 
