@@ -88,8 +88,10 @@ public class AuthServiceImpl implements AuthService {
 
         String revokedAt = redisService.get(KEY, id.toString());
 
+        long duration = expiredAt.getTime() - System.currentTimeMillis();
+
         if (revokedAt == null)
-            redisService.put(KEY, id.toString(), Utils.dateToString(new Date()), expiredAt.getTime());
+            redisService.put(KEY, id.toString(), Utils.dateToString(new Date()), duration);
         else
             throw new BadCredentialsException(MessageFormat.format(
                     Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, revokedAt));

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisServiceImpl<V> implements RedisService<V> {
@@ -26,8 +27,8 @@ public class RedisServiceImpl<V> implements RedisService<V> {
     }
 
     @Override
-    public void set(String key, V value, long expiredAt) {
-        valueOperations.set(key, value, Duration.ofMillis(expiredAt));
+    public void set(String key, V value, long duration) {
+        valueOperations.set(key, value, duration, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -36,10 +37,10 @@ public class RedisServiceImpl<V> implements RedisService<V> {
     }
 
     @Override
-    public void put(String key, String hashKey, V hashValue, long expiredAt) {
+    public void put(String key, String hashKey, V hashValue, long duration) {
         put(key, hashKey, hashValue);
-        
-        hashOperations.expire(key, Duration.ofMillis(expiredAt), List.of(hashKey));
+
+        hashOperations.expire(key, Duration.ofMillis(duration), List.of(hashKey));
     }
 
     @Override

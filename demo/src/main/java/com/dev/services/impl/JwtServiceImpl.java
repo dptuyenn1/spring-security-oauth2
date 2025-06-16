@@ -55,7 +55,7 @@ public class JwtServiceImpl implements JwtService {
     public String generateToken(User user, Type type) {
         Instant issuedAt = Instant.now();
 
-        Date expiredAt = new Date(issuedAt.plusMillis(Constants.JWT.REFRESH_TOKEN.DURATION).toEpochMilli());
+        Date expiredAt = new Date(issuedAt.plusMillis(Constants.JWT.DEFAULT_DURATION).toEpochMilli());
 
         switch (type) {
             case ACCESS -> expiredAt =
