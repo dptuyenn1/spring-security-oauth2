@@ -1,5 +1,6 @@
 package com.dev.services.impl;
 
+import com.dev.dto.cache.RefreshToken;
 import com.dev.dto.request.LoginRequest;
 import com.dev.dto.request.RegisterRequest;
 import com.dev.dto.response.AuthResponse;
@@ -37,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final RedisService<String> redisService;
+    private final RedisService<RefreshToken> redisService;
 
     private AuthResponse createAuthResponse(String accessToken, String refreshToken) {
         HttpCookie cookie = ResponseCookie
@@ -86,15 +87,21 @@ public class AuthServiceImpl implements AuthService {
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
-        String revokedAt = redisService.get(KEY, id.toString());
+        RefreshToken token = redisService.get(KEY, id.toString());
 
         long duration = expiredAt.getTime() - System.currentTimeMillis();
 
-        if (revokedAt == null)
-            redisService.put(KEY, id.toString(), Utils.dateToString(new Date()), duration);
-        else
+        if (token == null) {
+            token = RefreshToken
+                    .builder()
+                    .id(id)
+                    .revokedAt(new Date())
+                    .build();
+
+            redisService.put(KEY, id.toString(), token, duration);
+        } else
             throw new BadCredentialsException(MessageFormat.format(
-                    Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, revokedAt));
+                    Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, Utils.dateToString(token.getRevokedAt())));
 
         return createAuthResponse(jwtService.generateToken(user, Type.ACCESS),
                 jwtService.generateToken(user, expiredAt));
