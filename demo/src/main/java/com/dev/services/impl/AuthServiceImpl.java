@@ -1,6 +1,6 @@
 package com.dev.services.impl;
 
-import com.dev.dto.cache.RefreshToken;
+import com.dev.dto.cache.InvalidToken;
 import com.dev.dto.request.LoginRequest;
 import com.dev.dto.request.RegisterRequest;
 import com.dev.dto.response.AuthResponse;
@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final RedisService<RefreshToken> redisService;
+    private final RedisService<InvalidToken> redisService;
 
     private AuthResponse createAuthResponse(String accessToken, String refreshToken) {
         HttpCookie cookie = ResponseCookie
@@ -87,21 +87,22 @@ public class AuthServiceImpl implements AuthService {
         if (type != Type.REFRESH)
             throw new BadCredentialsException(Constants.EXCEPTION_MESSAGES.INVALID_TOKEN);
 
-        RefreshToken token = redisService.get(KEY, id.toString());
+        InvalidToken invalidToken = redisService.get(KEY, id.toString());
 
-        long duration = expiredAt.getTime() - System.currentTimeMillis();
+        if (invalidToken == null) {
+            long duration = expiredAt.getTime() - System.currentTimeMillis();
 
-        if (token == null) {
-            token = RefreshToken
+            invalidToken = InvalidToken
                     .builder()
                     .id(id)
                     .revokedAt(new Date())
+                    .type(type)
                     .build();
 
-            redisService.put(KEY, id.toString(), token, duration);
+            redisService.put(KEY, id.toString(), invalidToken, duration);
         } else
             throw new BadCredentialsException(MessageFormat.format(
-                    Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, Utils.dateToString(token.getRevokedAt())));
+                    Constants.EXCEPTION_MESSAGES.TOKEN_REVOKED, Utils.dateToString(invalidToken.getRevokedAt())));
 
         return createAuthResponse(jwtService.generateToken(user, Type.ACCESS),
                 jwtService.generateToken(user, expiredAt));
