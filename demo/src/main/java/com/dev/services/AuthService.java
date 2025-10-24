@@ -1,9 +1,9 @@
 package com.dev.services;
 
-import com.dev.dto.request.LoginRequest;
-import com.dev.dto.request.RegisterRequest;
-import com.dev.dto.response.AuthResponse;
-import com.dev.dto.response.UserResponse;
+import com.dev.dto.requests.LoginRequest;
+import com.dev.dto.requests.RegisterRequest;
+import com.dev.dto.responses.AuthResponse;
+import com.dev.dto.responses.UserResponse;
 
 public interface AuthService {
 

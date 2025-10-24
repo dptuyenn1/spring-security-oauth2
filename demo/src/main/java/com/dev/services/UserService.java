@@ -1,6 +1,6 @@
 package com.dev.services;
 
-import com.dev.dto.request.RegisterRequest;
+import com.dev.dto.requests.RegisterRequest;
 import com.dev.models.User;
 
 public interface UserService {

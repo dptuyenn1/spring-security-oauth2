@@ -1,6 +1,6 @@
 package com.dev.controllers;
 
-import com.dev.dto.response.SuccessResponse;
+import com.dev.dto.responses.SuccessResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

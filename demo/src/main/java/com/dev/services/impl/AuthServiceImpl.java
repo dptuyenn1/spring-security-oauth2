@@ -1,10 +1,10 @@
 package com.dev.services.impl;
 
-import com.dev.dto.cache.InvalidToken;
-import com.dev.dto.request.LoginRequest;
-import com.dev.dto.request.RegisterRequest;
-import com.dev.dto.response.AuthResponse;
-import com.dev.dto.response.UserResponse;
+import com.dev.dto.caches.InvalidToken;
+import com.dev.dto.requests.LoginRequest;
+import com.dev.dto.requests.RegisterRequest;
+import com.dev.dto.responses.AuthResponse;
+import com.dev.dto.responses.UserResponse;
 import com.dev.enums.Type;
 import com.dev.helpers.Constants;
 import com.dev.helpers.Utils;

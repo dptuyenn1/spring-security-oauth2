@@ -1,8 +1,8 @@
 package com.dev.services.impl;
 
-import com.dev.dto.request.RegisterRequest;
+import com.dev.dto.requests.RegisterRequest;
 import com.dev.enums.Authority;
-import com.dev.exceptions.DuplicateException;
+import com.dev.exceptions.ConflictException;
 import com.dev.helpers.Constants;
 import com.dev.mappers.UserMapper;
 import com.dev.models.User;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username).orElse(null);
 
         if (user != null)
-            throw new DuplicateException(
+            throw new ConflictException(
                     MessageFormat.format(Constants.EXCEPTION_MESSAGES.DUPLICATED,
                             "User with username: " + username));
 

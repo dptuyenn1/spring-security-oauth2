@@ -1,4 +1,4 @@
-package com.dev.dto.response;
+package com.dev.dto.responses;
 
 import com.dev.dto.BaseDTO;
 import com.dev.enums.Authority;

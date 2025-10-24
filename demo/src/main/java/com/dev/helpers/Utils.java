@@ -1,6 +1,6 @@
 package com.dev.helpers;
 
-import com.dev.dto.response.ErrorResponse;
+import com.dev.dto.responses.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;

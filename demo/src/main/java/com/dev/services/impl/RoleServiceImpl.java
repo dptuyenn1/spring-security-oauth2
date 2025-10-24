@@ -1,9 +1,9 @@
 package com.dev.services.impl;
 
-import com.dev.dto.request.RoleRequest;
-import com.dev.dto.response.RoleResponse;
+import com.dev.dto.requests.RoleRequest;
+import com.dev.dto.responses.RoleResponse;
 import com.dev.enums.Authority;
-import com.dev.exceptions.DuplicateException;
+import com.dev.exceptions.ConflictException;
 import com.dev.exceptions.NotFoundException;
 import com.dev.helpers.Constants;
 import com.dev.mappers.RoleMapper;
@@ -32,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findByAuthority(request.getAuthority()).orElse(null);
 
         if (role != null)
-            throw new DuplicateException(
+            throw new ConflictException(
                     MessageFormat.format(Constants.EXCEPTION_MESSAGES.DUPLICATED,
                             "Role with authority: " + request.getAuthority()));
 

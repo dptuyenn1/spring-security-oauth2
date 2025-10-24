@@ -16,10 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimValidator;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -99,9 +96,14 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder() {
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), MacAlgorithm.HS512.getName());
 
+        /* JwtTimestampValidator
+        must declare if using custom validator, otherwise the default validator will be overridden
+        => causing permanent token (cannot expire)
+        parameterless constructor will use exp claim to validate is token expired
+         */
         OAuth2TokenValidator<Jwt> tokenValidator = new DelegatingOAuth2TokenValidator<>(
-                new JwtClaimValidator<>(Constants.JWT.TYPE_CLAIM,
-                        claim -> claim.toString().equals(Type.ACCESS.name()))
+                new JwtTimestampValidator(),
+                new JwtClaimValidator<>(Constants.JWT.TYPE_CLAIM, claim -> claim.equals(Type.ACCESS.name()))
         );
 
         NimbusJwtDecoder decoder = NimbusJwtDecoder

@@ -1,7 +1,7 @@
 package com.dev.mappers;
 
-import com.dev.dto.request.RegisterRequest;
-import com.dev.dto.response.UserResponse;
+import com.dev.dto.requests.RegisterRequest;
+import com.dev.dto.responses.UserResponse;
 import com.dev.models.Role;
 import com.dev.models.User;
 import org.mapstruct.Mapper;

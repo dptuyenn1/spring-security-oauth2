@@ -1,6 +1,6 @@
 package com.dev.exceptions;
 
-import com.dev.dto.response.ErrorResponse;
+import com.dev.dto.responses.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -45,9 +45,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(value = DuplicateException.class)
+    @ExceptionHandler(value = ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse<String> handleException(final DuplicateException exception, HttpServletRequest request) {
+    public ErrorResponse<String> handleException(final ConflictException exception, HttpServletRequest request) {
         return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 

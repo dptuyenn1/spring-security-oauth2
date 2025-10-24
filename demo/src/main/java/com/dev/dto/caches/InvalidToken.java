@@ -1,4 +1,4 @@
-package com.dev.dto.cache;
+package com.dev.dto.caches;
 
 import com.dev.enums.Type;
 import lombok.Builder;

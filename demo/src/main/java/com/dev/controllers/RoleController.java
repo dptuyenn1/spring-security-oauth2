@@ -1,8 +1,8 @@
 package com.dev.controllers;
 
-import com.dev.dto.request.RoleRequest;
-import com.dev.dto.response.RoleResponse;
-import com.dev.dto.response.SuccessResponse;
+import com.dev.dto.requests.RoleRequest;
+import com.dev.dto.responses.RoleResponse;
+import com.dev.dto.responses.SuccessResponse;
 import com.dev.helpers.Constants;
 import com.dev.services.RoleService;
 import lombok.RequiredArgsConstructor;

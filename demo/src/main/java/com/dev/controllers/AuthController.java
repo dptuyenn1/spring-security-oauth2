@@ -1,10 +1,10 @@
 package com.dev.controllers;
 
-import com.dev.dto.request.LoginRequest;
-import com.dev.dto.request.RegisterRequest;
-import com.dev.dto.response.AuthResponse;
-import com.dev.dto.response.SuccessResponse;
-import com.dev.dto.response.UserResponse;
+import com.dev.dto.requests.LoginRequest;
+import com.dev.dto.requests.RegisterRequest;
+import com.dev.dto.responses.AuthResponse;
+import com.dev.dto.responses.SuccessResponse;
+import com.dev.dto.responses.UserResponse;
 import com.dev.helpers.Constants;
 import com.dev.services.AuthService;
 import io.swagger.v3.oas.annotations.Parameter;

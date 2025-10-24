@@ -1,7 +1,7 @@
 package com.dev.mappers;
 
-import com.dev.dto.request.RoleRequest;
-import com.dev.dto.response.RoleResponse;
+import com.dev.dto.requests.RoleRequest;
+import com.dev.dto.responses.RoleResponse;
 import com.dev.models.Role;
 import org.mapstruct.Mapper;
 
@@ -9,6 +9,6 @@ import org.mapstruct.Mapper;
 public interface RoleMapper {
 
     RoleResponse toRoleResponse(Role role);
-    
+
     Role toRole(RoleRequest request);
 }
