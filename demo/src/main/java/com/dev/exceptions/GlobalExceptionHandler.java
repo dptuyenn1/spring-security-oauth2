@@ -1,8 +1,11 @@
 package com.dev.exceptions;
 
 import com.dev.dto.responses.ErrorResponse;
+import com.dev.helpers.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -54,6 +57,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {AuthenticationException.class, JwtException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse<String> handleUnauthorizedException(final Exception exception, HttpServletRequest request) {
+        return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(value = {AuthorizationDeniedException.class, AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse<String> handleAccessDeniedException(final Exception exception, HttpServletRequest request) {
+        if (exception instanceof AuthorizationDeniedException ex)
+            return new ErrorResponse<>(Constants.EXCEPTION_MESSAGES.ACCESS_DENIED, request.getRequestURI());
+
         return new ErrorResponse<>(exception.getMessage(), request.getRequestURI());
     }
 }
